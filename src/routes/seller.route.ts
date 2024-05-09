@@ -45,19 +45,6 @@ router.post("/login", async (req, res, next) => {
     const seller = await Seller.findOne({ phone: req.body.phone });
 
     if (seller && req.body.password === seller.password) {
-      const token = generateToken({
-        id: seller._id.toString(),
-        name: seller.name,
-        status: seller.status,
-      });
-
-      res.cookie("auth", token, {
-        secure: true,
-        path: "/",
-        sameSite: "none",
-        maxAge: 3 * 86400,
-      });
-
       return res.status(200).json({
         success: true,
         data: seller,

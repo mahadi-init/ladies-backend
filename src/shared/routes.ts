@@ -13,10 +13,6 @@ import user from "./../routes/user.route";
 
 const router = Router();
 
-router.get("/", (_, res) => {
-  res.send("Welcome To The API");
-});
-
 router.use("/admin", admin);
 router.use("/brand", brand);
 router.use("/category", category);

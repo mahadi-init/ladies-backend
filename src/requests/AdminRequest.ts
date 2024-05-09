@@ -13,20 +13,6 @@ export class AdminRequest extends SharedRequest {
       const admin = await this.model.findOne({ phone: req.body.phone });
 
       if (admin && req.body.password === admin.password) {
-        const token = generateToken({
-          id: admin._id.toString(),
-          name: admin.name,
-          role: admin.role,
-          status: admin.status,
-        });
-
-        res.cookie("auth", token, {
-          secure: true,
-          path: "/",
-          sameSite: "none",
-          maxAge: 7 * 86400000,
-        });
-
         return res.status(200).json({
           success: true,
           data: admin,
