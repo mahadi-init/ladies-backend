@@ -24,6 +24,6 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(jwtAuthorization); // jwt auth middleware
+// app.use(jwtAuthorization); // jwt auth middleware
 
 export default app;
