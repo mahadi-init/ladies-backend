@@ -28,6 +28,10 @@ export class BaseRequest {
     try {
       const data = await this.model.findById(req.params.id);
 
+      if (!data) {
+        throw new Error("Data not found");
+      }
+
       res.status(200).json({
         success: true,
         data: data,
@@ -58,6 +62,12 @@ export class BaseRequest {
 
   updateData = async (req: Request, res: Response) => {
     try {
+      const data = await this.model.findById(req.params.id);
+
+      if (!data) {
+        throw new Error("Data not found");
+      }
+
       await this.model.findByIdAndUpdate(req.params.id, req.body);
 
       res.status(200).json({
@@ -73,12 +83,20 @@ export class BaseRequest {
 
   deleteData = async (req: Request, res: Response) => {
     try {
+      const data = await this.model.findById(req.params.id);
+
+      if (!data) {
+        throw new Error("Data not found");
+      }
+
       await this.model.findByIdAndDelete(req.params.id);
 
       res.status(200).json({
         success: true,
       });
     } catch (error: any) {
+      console.log(error);
+
       res.status(400).json({
         success: false,
         message: error.message,

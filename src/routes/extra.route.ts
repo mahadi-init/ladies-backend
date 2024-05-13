@@ -1,7 +1,7 @@
 //@ts-check
 import { Router } from "express";
+import { ExtraRequest } from "../controller/extra.controller";
 import { Extra } from "../model/extra.model";
-import { ExtraRequest } from "../requests/ExtraRequest";
 
 const router = Router();
 const handler = new ExtraRequest(Extra);

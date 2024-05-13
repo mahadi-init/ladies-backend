@@ -26,12 +26,6 @@ const brandSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    products: [
-      {
-        type: ObjectId,
-        ref: "Product",
-      },
-    ],
   },
   {
     timestamps: true,

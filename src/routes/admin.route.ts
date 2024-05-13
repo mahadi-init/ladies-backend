@@ -1,7 +1,6 @@
-// @ts-check
 import { Router } from "express";
+import { AdminRequest } from "../controller/admin.controller";
 import { Admin } from "../model/admin.model";
-import { AdminRequest } from "../requests/AdminRequest";
 
 const router = Router();
 const handler = new AdminRequest(Admin);
@@ -9,6 +8,8 @@ const handler = new AdminRequest(Admin);
 router.get("/all", handler.getAllData); // GET ALL
 
 router.get("/get/:id", handler.getSingleData); //GET SINGLE
+
+router.get("/status/:id", handler.getStatus); // GET STATUS
 
 router.get("/total-pages", handler.getTotalPages); // GET TOTAL PAGES
 

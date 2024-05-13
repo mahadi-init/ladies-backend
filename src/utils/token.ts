@@ -16,10 +16,10 @@ export const generateToken = (user: User) => {
     status: user.status,
   };
 
-  if (!secrets.JWT_SECRET) {
+  if (!secrets.jwt_secret) {
     throw new Error("JWT token not found!!");
   }
 
-  const token = jwt.sign(payload, secrets.JWT_SECRET, { expiresIn: "7d" });
+  const token = jwt.sign(payload, secrets.jwt_secret, { expiresIn: "7d" });
   return token;
 };

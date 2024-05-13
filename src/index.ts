@@ -6,14 +6,16 @@ import middleware from "./shared/middleware";
 import routes from "./shared/routes";
 
 const app = express();
-const PORT = secrets.PORT;
+const PORT = secrets.port;
 
 // root route
-app.get("/api/v1", (_, res) => {
+app.get("/api/v1", (_, res, next) => {
   res.json({
     success: true,
     message: "Welcome To The API",
   });
+
+  next();
 });
 
 // implement middleware

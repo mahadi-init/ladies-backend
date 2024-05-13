@@ -7,6 +7,22 @@ export class SharedRequest extends BaseRequest {
     super(model);
   }
 
+  getActiveData = async (_: Request, res: Response) => {
+    try {
+      const result = await this.model.find({ status: true });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+
   getTotalPages = async (_: Request, res: Response) => {
     try {
       const result = await this.model.estimatedDocumentCount();

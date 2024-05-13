@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-const { ObjectId } = mongoose.Schema.Types;
 
 const categorySchema = new mongoose.Schema(
   {
@@ -9,10 +8,7 @@ const categorySchema = new mongoose.Schema(
       trim: true,
       unique: true,
     },
-    img: {
-      type: String,
-      required: false,
-    },
+    img: String,
     children: [{ type: String }],
     productType: {
       type: String,
@@ -20,16 +16,7 @@ const categorySchema = new mongoose.Schema(
       required: true,
       lowercase: true,
     },
-    description: {
-      type: String,
-      required: false,
-    },
-    products: [
-      {
-        type: ObjectId,
-        ref: "Products",
-      },
-    ],
+    description: String,
     status: {
       type: Boolean,
       default: true,

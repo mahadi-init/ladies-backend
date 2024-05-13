@@ -1,8 +1,7 @@
 // @ts-check
 import { Router } from "express";
+import { SellerRequest } from "../controller/seller.controller";
 import { Seller } from "../model/seller.model";
-import { generateToken } from "../utils/token";
-import { SellerRequest } from "../requests/SellerRequest";
 
 const router = Router();
 const handler = new SellerRequest(Seller);
@@ -13,7 +12,19 @@ router.get("/get/:id", handler.getSingleData); // GET SINGLE
 
 router.get("/total-pages", handler.getTotalPages); // GET TOTAL PAGES
 
-router.get("/page", handler.pagination); // PAGINIATION
+router.get("/page", handler.pagination); // PAGINATION
+
+router.get("/status/:id", handler.getStatus); // GET STATUS
+
+router.get("/transaction/last/:id", handler.getLastTransaction); // GET LAST TRANSACTION
+
+router.get("/transaction/all/:id", handler.getAllTransactions); // GET ALL TRANSACTION
+
+router.get("/withdraw/last/:id", handler.getLastWithdraw); // GET LAST WITHDRAW
+
+router.get("/withdraw/all/:id", handler.getAllWithdraws); // GET ALL WITHDRAWs
+
+router.post("/withdraw", handler.createWithdrawRequest); // MAKE WITHDRAW REQUEST
 
 // search
 router.get("/search", async (req, res, next) => {

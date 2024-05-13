@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema(
   {
-    sellerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Seller",
-      required: true,
-    },
-    deposit: Number,
-    withdraw: Number,
+    person: String,
+    amount: String,
+    merchantInvoiceNumber: String,
+    paymentCreateTime: String,
+    paymentID: String,
+    transactionStatus: String,
+    isSeller: Boolean,
   },
   {
     timestamps: true,

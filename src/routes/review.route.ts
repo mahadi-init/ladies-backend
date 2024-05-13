@@ -1,7 +1,7 @@
 //@ts-check
 import { Router } from "express";
+import { ReviewRequest } from "../controller/review.controller";
 import { Review } from "../model/review.model";
-import { ReviewRequest } from "../requests/ReviewRequest";
 
 const router = Router();
 const handler = new ReviewRequest(Review);

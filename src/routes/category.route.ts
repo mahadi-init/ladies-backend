@@ -1,7 +1,7 @@
 //@ts-check
 import { Router } from "express";
+import { CategoryRequest } from "../controller/category.controller";
 import { Category } from "../model/category.model";
-import { CategoryRequest } from "../requests/CategoryRequest";
 
 const router = Router();
 const handler = new CategoryRequest(Category);
@@ -10,7 +10,9 @@ router.get("/all", handler.getAllData); // GET ALL
 
 router.get("/get/:id", handler.getSingleData); // GET SINGLE
 
-router.get("/show/:type", handler.showTypes); // GET SHOW TYPE
+router.get("/active", handler.getActiveData); // GET ALL ACTIVE
+
+router.get("/active/:type", handler.showTypes); // GET SHOW TYPE
 
 router.get("/total-pages", handler.getTotalPages); // GET TOTAl PAGES
 

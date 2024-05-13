@@ -1,7 +1,7 @@
 //@ts-check
 import { Router } from "express";
+import { UserRequest } from "../controller/user.controller";
 import { User } from "../model/user.model";
-import { UserRequest } from "../requests/UserRequest";
 
 const router = Router();
 const handler = new UserRequest(User);

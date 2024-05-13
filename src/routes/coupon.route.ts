@@ -1,7 +1,6 @@
-//@ts-check
 import { Router } from "express";
+import { CouponRequest } from "../controller/coupon.controller";
 import { Coupon } from "../model/coupon.model";
-import { CouponRequest } from "../requests/CouponRequest";
 
 const router = Router();
 const handler = new CouponRequest(Coupon);

@@ -1,6 +1,6 @@
 import { Router } from "express";
+import { BrandRequest } from "../controller/brand.controller";
 import { Brand } from "../model/brand.model";
-import { BrandRequest } from "../requests/BrandRequest";
 
 const router = Router();
 const handler = new BrandRequest(Brand);

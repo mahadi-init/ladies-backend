@@ -9,9 +9,7 @@ export class CategoryRequest extends SharedRequest {
 
   showTypes = async (req: Request, res: Response) => {
     try {
-      const result = this.model
-        .find({ productType: req.params.type })
-        .populate("products");
+      const result = await this.model.find({ productType: req.params.type });
 
       res.status(200).json({
         success: true,

@@ -9,7 +9,12 @@ const app = express();
 //middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://ladies-sign-admin.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://ladies-sign-admin.vercel.app",
+      "http://localhost:5173",
+    ],
     credentials: true,
     allowedHeaders: [
       "Content-Type",
