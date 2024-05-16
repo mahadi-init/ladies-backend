@@ -1,16 +1,16 @@
-import { Request, Response } from "express";
 import mongoose from "mongoose";
-import { Transaction } from "../model/transaction.model";
 import { SharedRequest } from "../helpers/SharedRequest";
+import { Request, Response } from "express";
 
-export class TransactionRequest extends SharedRequest {
+export class WithdrawRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getLastTransaction = async (req: Request, res: Response) => {
+  getLastWithdraw = async (req: Request, res: Response) => {
     try {
-      const data = await Transaction.findOne({ person: req.params.id })
+      const data = await this.model
+        .findOne({ seller: req.params.id, status: true })
         .sort({
           createdAt: -1,
         })
@@ -28,9 +28,9 @@ export class TransactionRequest extends SharedRequest {
     }
   };
 
-  getAllTransactionsByID = async (req: Request, res: Response) => {
+  getAllWithdraws = async (req: Request, res: Response) => {
     try {
-      const data = await Transaction.find({ person: req.params.id });
+      const data = await this.model.find({ seller: req.params.id });
 
       res.status(200).json({
         success: true,

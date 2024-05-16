@@ -17,7 +17,7 @@ const withdrawSchema = new mongoose.Schema(
       requried: true,
     },
     message: String,
-    bkashNumber: {
+    bkash: {
       type: String,
       required: true,
     },

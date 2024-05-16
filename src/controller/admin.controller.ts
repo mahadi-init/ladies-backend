@@ -67,4 +67,22 @@ export class AdminRequest extends SharedRequest {
       });
     }
   };
+
+  changePassword = async (req: Request, res: Response) => {
+    try {
+      const result = await this.model.findByIdAndUpdate(req.params.id, {
+        password: req.body.password,
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
 }

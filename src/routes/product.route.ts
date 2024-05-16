@@ -25,7 +25,7 @@ router.get("/review", handler.getReviewProduct); // GET REVIEW
 
 router.get("/popular/:type", handler.getPopularProducts); // GET POPULAR PRODUCTS
 
-router.get("/:type", handler.getTypeOfProducts); // GET TYPE OF PRODuCTS
+router.get("/find", handler.findProducts); // GET TYPE OF PRODuCTS
 
 router.get("/related/:id", handler.getRelatedProducts); // GET REALTED PRODUCTS
 

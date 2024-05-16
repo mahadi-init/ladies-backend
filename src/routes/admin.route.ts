@@ -23,6 +23,8 @@ router.post("/login", handler.login);
 
 router.patch("/edit/:id", handler.updateData); // UPDATE
 
+router.patch("/change-password/:id", handler.changePassword); // CHANGE PASSWORD
+
 router.delete("/delete/:id", handler.deleteData); // DELETE
 
 export default router;

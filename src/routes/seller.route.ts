@@ -16,16 +16,6 @@ router.get("/page", handler.pagination); // PAGINATION
 
 router.get("/status/:id", handler.getStatus); // GET STATUS
 
-router.get("/transaction/last/:id", handler.getLastTransaction); // GET LAST TRANSACTION
-
-router.get("/transaction/all/:id", handler.getAllTransactions); // GET ALL TRANSACTION
-
-router.get("/withdraw/last/:id", handler.getLastWithdraw); // GET LAST WITHDRAW
-
-router.get("/withdraw/all/:id", handler.getAllWithdraws); // GET ALL WITHDRAWs
-
-router.post("/withdraw", handler.createWithdrawRequest); // MAKE WITHDRAW REQUEST
-
 // search
 router.get("/search", async (req, res, next) => {
   try {
@@ -43,8 +33,11 @@ router.get("/search", async (req, res, next) => {
       success: true,
       data: result,
     });
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
@@ -65,12 +58,17 @@ router.post("/login", async (req, res, next) => {
     res.status(400).json({
       success: false,
     });
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
 router.patch("/edit/:id", handler.updateData); // UPDATE SELLR
+
+router.patch("/update-status/:id", handler.updateData); // UPDATE STATUS
 
 // change password
 router.patch("/change-password/:id", async (req, res, next) => {
@@ -83,8 +81,11 @@ router.patch("/change-password/:id", async (req, res, next) => {
       success: true,
       data: result,
     });
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 

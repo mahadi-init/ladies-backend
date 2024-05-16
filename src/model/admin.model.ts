@@ -26,10 +26,7 @@ const adminSchema = new mongoose.Schema(
       required: false,
       validate: [validator.isURL, "Please provide valid url(s)"],
     },
-    address: {
-      type: String,
-      required: false,
-    },
+    address: String,
     role: {
       type: String,
       default: "EDITOR",

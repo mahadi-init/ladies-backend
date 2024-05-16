@@ -149,31 +149,28 @@ export class ProductRequest extends SharedRequest {
     }
   };
 
-  getTypeOfProducts = async (req: Request, res: Response) => {
+  findProducts = async (req: Request, res: Response) => {
     try {
-      const type = req.params.type;
-
       let products;
 
       if (req.query.new === "true") {
-        products = await Product.find({ productType: type })
+        products = await Product.find()
           .sort({ createdAt: -1 })
           .limit(8)
           .populate("reviews");
       } else if (req.query.featured === "true") {
         products = await Product.find({
-          productType: type,
           featured: true,
         }).populate("reviews");
       } else if (req.query.topSellers === "true") {
-        products = await Product.find({ productType: type })
+        products = await Product.find()
           .sort({ sellCount: -1 })
           .limit(8)
           .populate("reviews");
       } else {
-        products = await Product.find({ productType: type }).populate(
-          "reviews",
-        );
+        products = await Product.find()
+          .sort({ createdAt: -1 })
+          .populate("reviews");
       }
 
       res.status(200).json({

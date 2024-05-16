@@ -80,4 +80,26 @@ export class SharedRequest extends BaseRequest {
       });
     }
   };
+
+  updateStatus = async (req: Request, res: Response) => {
+    try {
+      const data = await this.model.findById(req.params.id);
+
+      if (!data) {
+        throw new Error("Data not found");
+      }
+
+      data.status = !data.status;
+      await data.save();
+
+      res.status(200).json({
+        success: true,
+      });
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error,
+      });
+    }
+  };
 }

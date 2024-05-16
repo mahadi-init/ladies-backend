@@ -5,10 +5,8 @@ import { TransactionRequest } from "../controller/transaction.controller";
 const router = Router();
 const handler = new TransactionRequest(Transaction);
 
-router.get("/transaction/:id", handler.getWithdrawDepositeData); // GET LAST WITHDRAW AND DEPOSITE
+router.get("/last/:id", handler.getLastTransaction); // GET LAST TRANSACTION
 
-router.get("/deposit/:id", handler.getLastDepositeData); // GET LAST DEPOSITE
-
-router.get("/withdraw/:id", handler.getLastWithdrawData); // GET LAST WITHDRAW
+router.get("/all/:id", handler.getAllTransactionsByID); // GET ALL TRANSACTION
 
 export default router;
