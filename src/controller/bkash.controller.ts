@@ -104,6 +104,7 @@ export class BkashRequest {
       });
 
       const data = await result.json();
+      console.log(data);
 
       if (data.statusCode !== "0000") {
         throw new Error(data.statusMessage);

@@ -81,7 +81,7 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
-  updateStatus = async (req: Request, res: Response) => {
+  changeStatus = async (req: Request, res: Response) => {
     try {
       const data = await this.model.findById(req.params.id);
 
