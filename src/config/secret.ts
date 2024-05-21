@@ -14,6 +14,11 @@ const secrets = {
   bkash_username: process.env.username as string,
   bkash_password: process.env.password as string,
   bkash_refresh_token: process.env.refresh_token as string,
+
+  // for Steadfast
+  STEADFAST_BASE_URL: process.env.STEADFAST_BASE_URL as string,
+  STEADFAST_API_KEY: process.env.STEADFAST_API_KEY as string,
+  STEADFAST_SECRECT_KEY: process.env.STEADFAST_SECRECT_KEY as string,
 };
 
 export default secrets;
