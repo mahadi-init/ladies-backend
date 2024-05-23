@@ -4,14 +4,13 @@ const ObjectId = Types.ObjectId;
 
 const orderSchema = new mongoose.Schema(
   {
-    user: {
-      type: ObjectId,
-      ref: "User",
+    personId: {
+      type: String,
       required: true,
     },
-    seller: {
-      type: ObjectId,
-      ref: "Seller",
+    isSeller: {
+      type: Boolean,
+      required: true,
     },
     cart: [
       {
@@ -19,6 +18,10 @@ const orderSchema = new mongoose.Schema(
         ref: "Product",
       },
     ],
+    name: {
+      type: String,
+      required: true,
+    },
     phone: {
       type: String,
       required: true,
@@ -27,10 +30,7 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    city: {
-      type: String,
-      required: false,
-    },
+    city: String,
     subTotal: {
       type: Number,
       required: true,
@@ -48,28 +48,15 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    shippingOption: {
-      type: String,
-      required: false,
-    },
+    referral: String,
     paymentMethod: {
       type: String,
       required: true,
     },
-    // only applicable for bkash/others
-    paymentDetails: Object,
-    orderNote: {
-      type: String,
-      required: false,
-    },
-    trackingCode: {
-      type: String,
-      required: false,
-    },
-    trackingLink: {
-      type: String,
-      required: false,
-    },
+    paymentDetails: {},
+    orderNote: String,
+    trackingCode: String,
+    trackingLink: String,
     invoice: {
       type: Number,
       unique: true,

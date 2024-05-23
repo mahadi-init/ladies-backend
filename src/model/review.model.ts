@@ -3,7 +3,10 @@ const { ObjectId } = mongoose.Schema.Types;
 
 const reviewSchema = new mongoose.Schema(
   {
-    userId: { type: ObjectId, ref: "User", required: true },
+    personId: {
+      type: String,
+      required: true,
+    },
     productId: {
       type: ObjectId,
       ref: "Product",

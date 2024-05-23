@@ -10,6 +10,8 @@ export class ProductRequest extends SharedRequest {
     super(model);
   }
 
+  //TODO: Find by category need to implement
+
   getSingleData = async (req: Request, res: Response) => {
     try {
       const result = await Product.findById(req.params.id).populate({

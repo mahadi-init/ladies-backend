@@ -17,6 +17,8 @@ router.get("/page", handler.pagination); // PAGINATION
 
 router.get("/search", handler.search); // SEARCH
 
+router.get("/active", handler.getActiveData); // ACTIVE
+
 router.post("/add", handler.addData); // ADD NEW DATA
 
 router.patch("/edit/:id", handler.updateData); // UPDATE
