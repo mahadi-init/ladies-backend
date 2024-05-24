@@ -13,6 +13,7 @@ import user from "./../routes/user.route";
 import bkash from "./../routes/bkash.route";
 import withdraw from "./../routes/withdraw.route";
 import dashboard from "./../routes/dashboard.route";
+import auth from "./../routes/auth.route";
 
 const router = Router();
 
@@ -30,6 +31,7 @@ router.use("/user", user);
 router.use("/bkash", bkash);
 router.use("/withdraw", withdraw);
 router.use("/dashboard", dashboard);
+router.use("/auth", auth);
 
 // Handle not found
 router.use((req, res, next) => {
