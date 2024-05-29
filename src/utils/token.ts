@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import secrets from "../config/secret";
+import { Request } from "express";
 
 interface User {
   id: string;
@@ -22,4 +23,19 @@ export const generateToken = (user: User) => {
 
   const token = jwt.sign(payload, secrets.jwt_secret, { expiresIn: "7d" });
   return token;
+};
+
+export const getBearerToken = async (req: Request) => {
+  try {
+    const bearerHeader = req.headers["authorization"];
+    if (typeof bearerHeader !== "undefined") {
+      const bearer = bearerHeader.split(" ");
+      const bearerToken = bearer[1];
+      return bearerToken;
+    } else {
+      throw new Error("Token is unavailable");
+    }
+  } catch (err: any) {
+    return err.message as string;
+  }
 };
