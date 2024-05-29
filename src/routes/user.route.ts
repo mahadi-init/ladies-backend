@@ -9,6 +9,8 @@ router.get("/all", handler.getAllData); // GET ALL
 
 router.get("/page", handler.pagination); // PAGINATION
 
+router.get("/active", handler.getActiveData); // GET ACTIVE PRODUCTS
+
 router.get("/total-pages", handler.getTotalPages);
 
 router.post("/register", handler.addData); // CREATE USER

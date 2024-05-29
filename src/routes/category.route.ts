@@ -24,6 +24,8 @@ router.post("/add", handler.addData); // ADD NEW DATA
 
 router.patch("/edit/:id", handler.updateData); // UPDATE DATA
 
+router.patch("/change-status/:id", handler.changeStatus); // UPDATE STATUS
+
 router.delete("/delete/:id", handler.deleteData); // DELETE DATA
 
 export default router;

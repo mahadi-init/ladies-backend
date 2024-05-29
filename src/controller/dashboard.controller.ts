@@ -209,9 +209,9 @@ export class DashboardRequest {
     try {
       const { page, limit } = req.query;
 
-      const pages = Number(page) || 1;
-      const limits = Number(limit) || 8;
-      const skip = (pages - 1) * limits;
+      // const pages = Number(page) || 1;
+      // const limits = Number(limit) || 8;
+      // // const skip = (pages - 1) * limits;
 
       const queryObject = {
         status: { $in: ["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"] },

@@ -9,6 +9,8 @@ router.get("/all", handler.getAllData); // GET ALL
 
 router.get("/get/:id", handler.getSingleData); // GET SINGLE
 
+router.get("/active", handler.getActiveData); // GET ACTIVE PRODUCTS
+
 router.get("/total-pages", handler.getTotalPages); // GET TOTAL
 
 router.get("/page", handler.pagination); // PAGINATION
@@ -18,6 +20,8 @@ router.get("/search", handler.search); // SEARCH
 router.post("/add", handler.addData); // ADD
 
 router.patch("/edit/:id", handler.updateData); // EDIT
+
+router.patch("/change-status/:id", handler.changeStatus); // UPDATE STATUS
 
 router.delete("/delete/:id", handler.deleteData); // DELETE
 

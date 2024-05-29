@@ -22,7 +22,7 @@ export async function nodemailerImpl(
     to: to.toString(),
     subject: subject,
     text: text,
-    html: "<p>Hello</p>",
+    // html: "<p>Hello</p>",
   };
 
   const info = await transporter.sendMail(mailOptions);
