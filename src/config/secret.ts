@@ -19,6 +19,10 @@ const secrets = {
   STEADFAST_BASE_URL: process.env.STEADFAST_BASE_URL as string,
   STEADFAST_API_KEY: process.env.STEADFAST_API_KEY as string,
   STEADFAST_SECRECT_KEY: process.env.STEADFAST_SECRECT_KEY as string,
+
+  //nodemailer
+  nodemailer_email: process.env.nodemailer_email as string,
+  nodemailer_password: process.env.nodemailer_password as string,
 };
 
 export default secrets;

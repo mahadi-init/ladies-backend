@@ -8,6 +8,7 @@
     "start": "tsc && node dist/index.js"
   },
   "dependencies": {
+    "@types/nodemailer": "^6.4.15",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dayjs": "^1.11.11",
@@ -16,6 +17,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.3",
     "morgan": "^1.10.0",
+    "nodemailer": "^6.9.13",
     "url": "^0.11.3",
     "validator": "^13.11.0"
   },

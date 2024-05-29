@@ -12,12 +12,12 @@ router.get("/all/product-types", handler.allProductTypes); // GET PRODUCT TYPES
 
 router.get("/all/colors", handler.allColors); // GET ALL COLORS
 
-router.get("/all/sizes", handler.allColors); // GET ALL SIZES
+router.get("/all/sizes", handler.allSizes); // GET ALL SIZES
 
 router.post("/add", handler.addData); // ADD
 
 router.patch("/edit/:id", handler.updateData); // UPDATE
 
-router.delete("/delete/:id", handler.deleteData); // DELETE
+router.delete("/delete", handler.deleteByQuery); // DELETE WITH QUERY PARAMS
 
 export default router;
