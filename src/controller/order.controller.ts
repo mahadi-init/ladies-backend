@@ -1,12 +1,28 @@
-import mongoose from "mongoose";
-import { SharedRequest } from "../helpers/SharedRequest";
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import secrets from "../config/secret";
+import { SharedRequest } from "../helpers/SharedRequest";
 
 export class OrderRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
+
+  getOrdersByPersonID = async (req: Request, res: Response) => {
+    try {
+      const data = await this.model.find({ personID: req.params.personID });
+
+      res.status(200).json({
+        success: true,
+        data: data,
+      });
+    } catch (err: any) {
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
+  };
 
   pagination = async (req: Request, res: Response) => {
     try {
@@ -99,13 +115,13 @@ export class OrderRequest extends SharedRequest {
             "Secret-Key": secrets.STEADFAST_SECRECT_KEY,
           },
           body: JSON.stringify(courirData),
-        },
+        }
       );
 
       const orderData = await data.json();
 
       if (orderData) {
-        // UPDATE DATABASE STATUS
+        // TODO:UPDATE DATABASE STATUS
       }
 
       throw new Error();

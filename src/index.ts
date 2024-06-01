@@ -1,11 +1,16 @@
 import "dotenv/config";
 import express from "express";
+import http from "http"; // Import the http module
 import connectDB from "./config/db";
 import secrets from "./config/secret";
 import middleware from "./shared/middleware";
 import routes from "./shared/routes";
+import wss from "./socket/message";
 
 const app = express();
+const server = http.createServer(app);
+
+// port
 const PORT = secrets.port;
 
 // root route
@@ -27,8 +32,11 @@ connectDB();
 // define routes
 app.use("/api/v1", routes);
 
+// websocket
+wss;
+
 // listen to port
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
 

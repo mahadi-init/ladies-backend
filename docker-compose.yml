@@ -1,0 +1,9 @@
+version: "3.1"
+
+services:
+  ladies:
+    image: mongo
+    container_name: ladies
+    ports:
+      - "127.0.0.1:27017:27017"
+    restart: always

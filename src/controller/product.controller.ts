@@ -1,14 +1,30 @@
 import { Request, Response } from "express";
-import { SharedRequest } from "../helpers/SharedRequest";
 import mongoose from "mongoose";
-import { Product } from "../model/product.model";
+import { SharedRequest } from "../helpers/SharedRequest";
 import { Brand } from "../model/brand.model";
 import { Category } from "../model/category.model";
+import { Product } from "../model/product.model";
 
 export class ProductRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
+
+  getAllData = async (_: Request, res: Response) => {
+    try {
+      const data = await this.model.find({}).populate("reviews");
+
+      res.status(200).json({
+        success: true,
+        data: data,
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
 
   //TODO: Find by category need to implement
 
@@ -16,7 +32,7 @@ export class ProductRequest extends SharedRequest {
     try {
       const result = await Product.findById(req.params.id).populate({
         path: "reviews",
-        populate: { path: "userId", select: "name phone" },
+        populate: { path: "personId", select: "name phone" },
       });
 
       res.status(200).json({
@@ -85,7 +101,7 @@ export class ProductRequest extends SharedRequest {
       const topRatedProducts = products.map((product) => {
         const totalRating = product.reviews.reduce(
           (sum: number, review: { rating: number }) => sum + review.rating,
-          0,
+          0
         );
         const averageRating = totalRating / product.reviews.length;
 
@@ -229,7 +245,6 @@ export class ProductRequest extends SharedRequest {
   addProduct = async (req: Request, res: Response) => {
     try {
       const { brand, category } = req.body;
-      console.log(brand, category);
 
       if (!brand || !category) {
         throw new Error("Brand and category are required");
