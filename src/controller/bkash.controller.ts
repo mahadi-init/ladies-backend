@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
+import url from "url";
 import secrets from "../config/secret";
 import { Bkash } from "../model/bkash.model";
-import url from "url";
-import { BkashPayment } from "../types/bkash.t";
-import { Transaction } from "../model/transaction.model";
 import { Seller } from "../model/seller.model";
+import { Transaction } from "../model/transaction.model";
+import { BkashPayment } from "../types/bkash.t";
 
 export class BkashRequest {
   private readonly sandboxUrl = secrets.bkash_sandbox_baseurl;
@@ -104,7 +104,6 @@ export class BkashRequest {
       });
 
       const data = await result.json();
-      console.log(data);
 
       if (data.statusCode !== "0000") {
         throw new Error(data.statusMessage);
@@ -141,7 +140,6 @@ export class BkashRequest {
       });
 
       const data: BkashPayment = await result.json();
-      console.log(data);
 
       if (data.statusCode !== "0000") {
         throw new Error(data.statusMessage);
@@ -158,7 +156,7 @@ export class BkashRequest {
       await Seller.findByIdAndUpdate(
         sellerID,
         { $inc: { balance: Number.parseInt(data.amount) } },
-        { $push: { transcations: tRes._id } },
+        { $push: { transcations: tRes._id } }
       );
 
       this.siteRedirect(res, this.sellerSiteURL, {
@@ -210,7 +208,7 @@ export class BkashRequest {
       url.format({
         pathname: pathname,
         query: query as any,
-      }),
+      })
     );
   };
 }

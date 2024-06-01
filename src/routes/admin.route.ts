@@ -21,6 +21,10 @@ router.post("/register", handler.addData); // ADD NEW ADMIN
 
 router.post("/login", handler.login);
 
+router.post("/forget-password", handler.forgetPassword); // FORGET PASSWORD
+
+router.post("/reset-token-login", handler.resetTokenLogin); // RESET TOKEN LOGIN
+
 router.patch("/edit/:id", handler.updateData); // UPDATE
 
 router.patch("/change-status/:id", handler.changeStatus); // UPDATE STATUS

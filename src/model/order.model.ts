@@ -1,16 +1,16 @@
-import mongoose from "mongoose";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 const ObjectId = Types.ObjectId;
 
 const orderSchema = new mongoose.Schema(
   {
-    personId: {
+    personID: {
       type: String,
       required: true,
     },
-    isSeller: {
-      type: Boolean,
+    sellerID: {
+      type: Number,
       required: true,
+      default: 1000,
     },
     cart: [
       {
@@ -69,9 +69,8 @@ const orderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
-
 // define pre-save middleware to generate the invoice number
 orderSchema.pre("save", async function (next) {
   const order = this;

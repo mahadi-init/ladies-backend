@@ -60,8 +60,6 @@ export class ExtraRequest extends SharedRequest {
   allSizes = async (_: Request, res: Response) => {
     try {
       const data = await this.model.find({}).distinct("size");
-      console.log(data);
-
       res.status(200).json({
         success: true,
         data: data,

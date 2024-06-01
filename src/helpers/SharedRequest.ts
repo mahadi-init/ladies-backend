@@ -1,6 +1,7 @@
-import mongoose from "mongoose";
-import { BaseRequest } from "./BaseRequest";
 import { Request, Response } from "express";
+import mongoose from "mongoose";
+import { nodemailerImpl } from "../utils/nodemailer-impl";
+import { BaseRequest } from "./BaseRequest";
 
 export class SharedRequest extends BaseRequest {
   constructor(model: typeof mongoose.Model) {
@@ -99,6 +100,74 @@ export class SharedRequest extends BaseRequest {
       res.status(400).json({
         success: false,
         message: error,
+      });
+    }
+  };
+
+  forgetPassword = async (req: Request, res: Response) => {
+    try {
+      const result = await this.model.findOne({ email: req.body.email });
+
+      // create 4 random token
+      const token =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
+
+      if (!result) {
+        throw new Error("User not found");
+      }
+
+      result.forgetPasswordToken = token;
+      await result.save();
+
+      await nodemailerImpl(
+        result.email,
+        "Password Recovery",
+        undefined,
+        `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://github.com/Nahidakanda/LadiesSign/blob/main/LadiesSignBkash.png?raw=true" alt="LadiesSign" style="max-width: 100%; height: auto;" />
+          </div>
+          <h1 style="color: #444;">Reset Your Password</h1>
+          <p>Hello,</p>
+          <p>We received a request to reset your password. Use the following token to reset it:</p>
+          <p style="font-size: 18px; font-weight: bold; color: #555;">${token}</p>
+          <p>If you did not request a password reset, please ignore this email.</p>
+          <p>Thank you,<br/>The LadiesSign Team</p>
+        </div>
+        `
+      );
+
+      res.status(200).json({
+        success: true,
+      });
+    } catch (err: any) {
+      res.status(400).json({
+        success: false,
+        message: err.message,
+      });
+    }
+  };
+
+  resetTokenLogin = async (req: Request, res: Response) => {
+    try {
+      const result = await this.model.findOne({
+        forgetPasswordToken: req.body.token,
+      });
+
+      if (!result) {
+        throw new Error("Wrong token");
+      }
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (err: any) {
+      res.status(400).json({
+        success: false,
+        message: err.message,
       });
     }
   };

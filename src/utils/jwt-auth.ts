@@ -5,9 +5,13 @@ import { getBearerToken } from "./token";
 export async function jwtAuthorization(
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) {
   try {
+    if (req.url.includes("/bkash/execute-payment/")) {
+      return next();
+    }
+
     const bearerToken = await getBearerToken(req);
 
     if (!bearerToken) {

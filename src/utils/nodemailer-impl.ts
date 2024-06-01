@@ -15,16 +15,21 @@ const transporter = nodemailer.createTransport({
 export async function nodemailerImpl(
   to: string[],
   subject: string,
-  text: string,
+  text?: string,
+  html?: string
 ) {
-  const mailOptions = {
-    from: { name: "Ladies Sign", address: secrets.nodemailer_email },
-    to: to.toString(),
-    subject: subject,
-    text: text,
-    // html: "<p>Hello</p>",
-  };
+  try {
+    const mailOptions = {
+      from: { name: "Ladies Sign", address: secrets.nodemailer_email },
+      to: to.toString(),
+      subject: subject,
+      text: text,
+      html: html,
+    };
 
-  const info = await transporter.sendMail(mailOptions);
-  return info;
+    const info = await transporter.sendMail(mailOptions);
+    return info;
+  } catch (error) {
+    throw error;
+  }
 }

@@ -23,10 +23,11 @@ const productSchema = new mongoose.Schema(
     variants: [
       {
         color: String,
-        code: String,
+        // code: String,
         img: String,
         size: String,
         quantity: Number,
+        price: Number,
       },
     ],
     children: [String],
@@ -119,7 +120,7 @@ const productSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 productSchema.pre("save", async function (next) {

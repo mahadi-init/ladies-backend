@@ -12,6 +12,11 @@ const adminSchema = new mongoose.Schema(
       required: true,
       minLength: [6, "Password must be at least 6 characters"],
     },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     phone: {
       type: String,
       required: true,
@@ -27,6 +32,7 @@ const adminSchema = new mongoose.Schema(
       validate: [validator.isURL, "Please provide valid url(s)"],
     },
     address: String,
+    forgetPasswordToken: String,
     role: {
       type: String,
       default: "EDITOR",
@@ -39,7 +45,7 @@ const adminSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export const Admin = mongoose.model("Admin", adminSchema);

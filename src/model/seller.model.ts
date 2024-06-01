@@ -17,6 +17,10 @@ const sellerSchema = new mongoose.Schema(
       required: true,
       minLength: [6, "Password must be at least 6 characters"],
     },
+    email: {
+      type: String,
+      trim: true,
+    },
     phone: {
       type: String,
       required: true,
@@ -39,13 +43,22 @@ const sellerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    approved: {
+      type: Boolean,
+      default: false,
+    },
     nid: String,
+    referrer: {
+      type: String,
+      default: 1000,
+    },
     license: String,
     balance: Number,
     sales: Number,
     commission: Number,
     facebookProfile: String,
     facebookPage: String,
+    forgetPasswordToken: String,
     transcations: [
       {
         type: ObjectId,
@@ -71,7 +84,7 @@ const sellerSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 sellerSchema.pre("save", async function (next) {

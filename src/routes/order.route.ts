@@ -1,7 +1,6 @@
-//@ts-check
 import { Router } from "express";
-import { Order } from "../model/order.model";
 import { OrderRequest } from "../controller/order.controller";
+import { Order } from "../model/order.model";
 
 const router = Router();
 const handler = new OrderRequest(Order);
@@ -9,6 +8,8 @@ const handler = new OrderRequest(Order);
 router.get("/all", handler.getAllData); // GET ALL
 
 router.get("/get/:id", handler.getSingleData); // GET SINGLE
+
+router.get("/by-person-id/:id", handler.getOrdersByPersonID); // GET BY PERSON ID
 
 router.get("/page", handler.pagination); // PAGINATION
 
