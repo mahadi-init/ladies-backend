@@ -10,23 +10,22 @@ export class UserRequest extends SharedRequest {
 
   login = async (req: Request, res: Response) => {
     try {
-      const user = await this.model.findOne({ phone: req.body.phone });
+      const data = await this.model.findOne({ phone: req.body.phone });
 
-      if (user && req.body.password === user.password) {
-        if (!user.status) {
+      if (data && req.body.password === data.password) {
+        if (!data.status) {
           throw new Error("Inactive account");
         }
 
         const token = generateToken({
-          id: user._id,
-          name: user.name,
-          status: user.status,
-          role: "user",
+          id: data._id,
+          name: data.name,
+          status: data.status,
         });
 
         return res.status(200).json({
           success: true,
-          data: user,
+          data: data,
           token: token,
         });
       }

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import secrets from "../config/secret";
 import { getBearerToken } from "./token";
 
@@ -14,12 +15,9 @@ export async function jwtAuthorization(
 
     const bearerToken = await getBearerToken(req);
 
-    if (!bearerToken) {
-      throw new Error("Token not found");
-    }
-
-    if (bearerToken !== secrets.bearer_token) {
-      throw new Error("Invalid token");
+    const data = jwt.verify(bearerToken, secrets.jwt_secret);
+    if (!data) {
+      throw new Error("Invalid token found");
     }
 
     next();

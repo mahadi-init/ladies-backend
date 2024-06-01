@@ -68,23 +68,22 @@ export class SellerRequest extends SharedRequest {
 
   login = async (req: Request, res: Response) => {
     try {
-      const seller = await this.model.findOne({ phone: req.body.phone });
+      const data = await this.model.findOne({ phone: req.body.phone });
 
-      if (seller && req.body.password === seller.password) {
-        if (!seller.status) {
+      if (data && req.body.password === data.password) {
+        if (!data.status) {
           throw new Error("Inactive account");
         }
 
         const token = generateToken({
-          id: seller._id,
-          name: seller.name,
-          status: seller.status,
-          role: "seller",
+          id: data._id,
+          name: data.name,
+          status: data.status,
         });
 
         return res.status(200).json({
           success: true,
-          data: seller,
+          data: data,
           token: token,
         });
       }
