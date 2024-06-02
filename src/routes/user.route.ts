@@ -15,6 +15,4 @@ router.get("/total-pages", handler.getTotalPages);
 
 router.post("/register", handler.addData); // CREATE USER
 
-router.post("/login", handler.login); //USER LOGIN
-
 export default router;

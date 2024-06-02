@@ -5,6 +5,7 @@ import connectDB from "./config/db";
 import secrets from "./config/secret";
 import middleware from "./shared/middleware";
 import routes from "./shared/routes";
+import { generateToken } from "./utils/token";
 
 const app = express();
 const server = http.createServer(app);
@@ -30,9 +31,6 @@ app.use(middleware);
 
 // define routes
 app.use("/api/v1", routes);
-
-// websocket
-// wss;
 
 // listen to port
 server.listen(PORT, () => {

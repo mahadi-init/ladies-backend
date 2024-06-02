@@ -59,6 +59,10 @@ const sellerSchema = new mongoose.Schema(
     facebookProfile: String,
     facebookPage: String,
     forgetPasswordToken: String,
+    role: {
+      type: String,
+      default: "SELLER",
+    },
     transcations: [
       {
         type: ObjectId,

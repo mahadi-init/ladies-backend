@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { nodemailerImpl } from "../utils/nodemailer-impl";
+import { generateToken } from "../utils/token";
 import { BaseRequest } from "./BaseRequest";
 
 export class SharedRequest extends BaseRequest {
@@ -104,6 +105,41 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
+  login = async (req: Request, res: Response) => {
+    try {
+      const data = await this.model.findOne({ phone: req.body.phone });
+
+      if (data && req.body.password === data.password) {
+        if (!data.status) {
+          throw new Error("Inactive account");
+        }
+
+        const token = generateToken({
+          id: data._id,
+          name: data.name,
+          status: data.status,
+          role: data.role,
+        });
+
+        return res.status(200).json({
+          success: true,
+          data: data,
+          token: token,
+        });
+      }
+
+      res.status(400).json({
+        success: false,
+        message: "No account found",
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+
   forgetPassword = async (req: Request, res: Response) => {
     try {
       const result = await this.model.findOne({ email: req.body.email });
@@ -152,17 +188,25 @@ export class SharedRequest extends BaseRequest {
 
   resetTokenLogin = async (req: Request, res: Response) => {
     try {
-      const result = await this.model.findOne({
+      const data = await this.model.findOne({
         forgetPasswordToken: req.body.token,
       });
 
-      if (!result) {
+      if (!data) {
         throw new Error("Wrong token");
       }
 
+      let token = generateToken({
+        id: data._id,
+        name: data.name,
+        status: data.status,
+        role: data.role,
+      });
+
       res.status(200).json({
         success: true,
-        data: result,
+        data: data,
+        token: token,
       });
     } catch (err: any) {
       res.status(400).json({

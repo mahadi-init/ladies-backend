@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import validator from "validator";
-import { Types } from "mongoose";
 
 const ObjectId = Types.ObjectId;
 
@@ -24,6 +23,10 @@ const userSchema = new mongoose.Schema(
       ],
     },
     address: String,
+    role: {
+      type: String,
+      deafult: "USER",
+    },
     status: {
       type: Boolean,
       default: true,
@@ -33,7 +36,7 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export const User = mongoose.model("User", userSchema);
