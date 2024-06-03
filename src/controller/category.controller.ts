@@ -1,6 +1,6 @@
+import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
-import { Request, Response } from "express";
 
 export class CategoryRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
@@ -9,7 +9,7 @@ export class CategoryRequest extends SharedRequest {
 
   showTypes = async (req: Request, res: Response) => {
     try {
-      const result = await this.model.find({ productType: req.params.type });
+      const result = await this.model.find({ productType: req.query.type });
 
       res.status(200).json({
         success: true,

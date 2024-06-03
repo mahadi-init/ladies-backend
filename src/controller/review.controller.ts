@@ -1,6 +1,6 @@
+import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
-import { Request, Response } from "express";
 
 export class ReviewRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
@@ -53,6 +53,22 @@ export class ReviewRequest extends SharedRequest {
       res.status(400).json({
         success: false,
         message: error.message,
+      });
+    }
+  };
+
+  getReviewsByProductId = async (req: Request, res: Response) => {
+    try {
+      const data = await this.model.find({ productId: req.params.id });
+
+      res.status(200).json({
+        success: true,
+        data: data,
+      });
+    } catch (err: any) {
+      res.status(400).json({
+        success: false,
+        message: err.message,
       });
     }
   };

@@ -8,6 +8,8 @@ const handler = new ReviewRequest(Review);
 
 router.get("/all", handler.getAllData); // GET ALL
 
+router.get("/:id", handler.getReviewsByProductId); // BY PRODUCT ID
+
 router.post("/add", handler.addData); // ADD NEW DATA
 
 router.delete("/delete/:id", handler.deleteData); // DELETE REVIEW

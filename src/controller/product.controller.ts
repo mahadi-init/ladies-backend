@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
 import { Brand } from "../model/brand.model";
 import { Category } from "../model/category.model";
-import { Product } from "../model/product.model";
+import { Review } from "../model/review.model";
 
 export class ProductRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
@@ -30,9 +30,9 @@ export class ProductRequest extends SharedRequest {
 
   getSingleData = async (req: Request, res: Response) => {
     try {
-      const result = await Product.findById(req.params.id).populate({
+      const result = await this.model.findById(req.params.id).populate({
         path: "reviews",
-        populate: { path: "personId", select: "name phone" },
+        model: Review,
       });
 
       res.status(200).json({
@@ -51,7 +51,7 @@ export class ProductRequest extends SharedRequest {
     try {
       const q = req.query.q;
 
-      const result = await Product.find({
+      const result = await this.model.find({
         $or: [
           { title: { $regex: q, $options: "i" } },
           { cid: { $regex: q, $options: "i" } },
@@ -73,12 +73,14 @@ export class ProductRequest extends SharedRequest {
 
   getOfferTimeProduct = async (req: Request, res: Response) => {
     try {
-      const result = await Product.find({
-        productType: req.query.type,
-        "offerDate.endDate": {
-          $gt: new Date(),
-        },
-      }).populate("reviews");
+      const result = await this.model
+        .find({
+          productType: req.query.type,
+          "offerDate.endDate": {
+            $gt: new Date(),
+          },
+        })
+        .populate("reviews");
 
       res.status(200).json({
         success: true,
@@ -94,9 +96,11 @@ export class ProductRequest extends SharedRequest {
 
   getTopRated = async (_: Request, res: Response) => {
     try {
-      const products = await Product.find({
-        reviews: { $exists: true, $ne: [] },
-      }).populate("reviews");
+      const products = await this.model
+        .find({
+          reviews: { $exists: true, $ne: [] },
+        })
+        .populate("reviews");
 
       const topRatedProducts = products.map((product) => {
         const totalRating = product.reviews.reduce(
@@ -127,12 +131,14 @@ export class ProductRequest extends SharedRequest {
 
   getReviewProduct = async (_: Request, res: Response) => {
     try {
-      const result = await Product.find({
-        reviews: { $exists: true },
-      }).populate({
-        path: "reviews",
-        populate: { path: "userid", select: "name email imageurl" },
-      });
+      const result = await this.model
+        .find({
+          reviews: { $exists: true },
+        })
+        .populate({
+          path: "reviews",
+          populate: { path: "userid", select: "name email imageurl" },
+        });
 
       const products = result.filter((p) => p.reviews.length > 0);
 
@@ -150,7 +156,8 @@ export class ProductRequest extends SharedRequest {
 
   getPopularProducts = async (req: Request, res: Response) => {
     try {
-      const result = await Product.find({ productType: req.params.type })
+      const result = await this.model
+        .find({ productType: req.params.type })
         .sort({ "reviews.length": -1 })
         .limit(8)
         .populate("reviews");
@@ -172,21 +179,26 @@ export class ProductRequest extends SharedRequest {
       let products;
 
       if (req.query.new === "true") {
-        products = await Product.find()
+        products = await this.model
+          .find()
           .sort({ createdAt: -1 })
           .limit(8)
           .populate("reviews");
       } else if (req.query.featured === "true") {
-        products = await Product.find({
-          featured: true,
-        }).populate("reviews");
+        products = await this.model
+          .find({
+            featured: true,
+          })
+          .populate("reviews");
       } else if (req.query.topSellers === "true") {
-        products = await Product.find()
+        products = await this.model
+          .find()
           .sort({ sellCount: -1 })
           .limit(8)
           .populate("reviews");
       } else {
-        products = await Product.find()
+        products = await this.model
+          .find()
           .sort({ createdAt: -1 })
           .populate("reviews");
       }
@@ -205,9 +217,9 @@ export class ProductRequest extends SharedRequest {
 
   getRelatedProducts = async (req: Request, res: Response) => {
     try {
-      const currentProduct = await Product.findById(req.params.id);
+      const currentProduct = await this.model.findById(req.params.id);
 
-      const result = await Product.find({
+      const result = await this.model.find({
         "category.name": currentProduct?.category?.name,
         _id: { $ne: req.params.id },
       });
@@ -226,7 +238,7 @@ export class ProductRequest extends SharedRequest {
 
   getStockoutProducts = async (_: Request, res: Response) => {
     try {
-      const result = await Product.find({ status: "OUT-OF-STOCK" }).sort({
+      const result = await this.model.find({ status: "OUT-OF-STOCK" }).sort({
         createdAt: -1,
       });
 
@@ -254,7 +266,7 @@ export class ProductRequest extends SharedRequest {
       const brandId = (await Brand.findOne({ name: brand.name }))?.id;
       const categoryId = (await Category.findOne({ name: category.name }))?.id;
 
-      const result = await Product.create({
+      const result = await this.model.create({
         ...req.body,
         brand: {
           name: brand.name,

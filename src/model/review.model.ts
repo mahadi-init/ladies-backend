@@ -3,9 +3,10 @@ const { ObjectId } = mongoose.Schema.Types;
 
 const reviewSchema = new mongoose.Schema(
   {
-    personId: {
+    name: {
       type: String,
-      required: true,
+      reuired: true,
+      default: "anonymous",
     },
     productId: {
       type: ObjectId,
