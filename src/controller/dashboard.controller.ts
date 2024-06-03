@@ -7,6 +7,7 @@ import isYesterday from "dayjs/plugin/isYesterday";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import secrets from "../config/secret";
+import { ExtendedRequest } from "../types/extended-request";
 
 // Apply necessary plugins to dayjs
 dayjs.extend(customParseFormat);
@@ -16,7 +17,7 @@ dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
 export class DashboardRequest {
-  getSteadFastBalance = async (_: Request, res: Response) => {
+  getSteadFastBalance = async (_: ExtendedRequest, res: Response) => {
     try {
       const data = await fetch(
         `${secrets.STEADFAST_BASE_URL}/api/v1/get_balance`,
@@ -43,12 +44,9 @@ export class DashboardRequest {
         message: error.message,
       });
     }
-
-    const data = await res.json();
-    return data;
   };
 
-  getDashboardAmount = async (_: Request, res: Response) => {
+  getDashboardAmount = async (_: ExtendedRequest, res: Response) => {
     try {
       const todayStart = dayjs().startOf("day");
       const todayEnd = dayjs().endOf("day");
@@ -135,7 +133,7 @@ export class DashboardRequest {
     }
   };
 
-  getSalesReport = async (_: Request, res: Response) => {
+  getSalesReport = async (_: ExtendedRequest, res: Response) => {
     try {
       const startOfWeek = new Date();
       startOfWeek.setDate(startOfWeek.getDate() - 7);
@@ -173,7 +171,7 @@ export class DashboardRequest {
     }
   };
 
-  getMostSellingCategory = async (_: Request, res: Response) => {
+  getMostSellingCategory = async (_: ExtendedRequest, res: Response) => {
     try {
       const categoryData = await Order.aggregate([
         {
@@ -205,7 +203,7 @@ export class DashboardRequest {
     }
   };
 
-  getDashboardRecentOrder = async (req: Request, res: Response) => {
+  getDashboardRecentOrder = async (req: ExtendedRequest, res: Response) => {
     try {
       const { page, limit } = req.query;
 

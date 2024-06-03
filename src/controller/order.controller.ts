@@ -2,15 +2,16 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import secrets from "../config/secret";
 import { SharedRequest } from "../helpers/SharedRequest";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class OrderRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getOrdersByPersonID = async (req: Request, res: Response) => {
+  getOrdersByPersonID = async (req: ExtendedRequest, res: Response) => {
     try {
-      const data = await this.model.find({ personID: req.params.personID });
+      const data = await this.model.find({ personID: req.id });
 
       res.status(200).json({
         success: true,
@@ -24,7 +25,7 @@ export class OrderRequest extends SharedRequest {
     }
   };
 
-  pagination = async (req: Request, res: Response) => {
+  pagination = async (req: ExtendedRequest, res: Response) => {
     try {
       const page = req.query.page;
       const limit = req.query.limit;
@@ -51,7 +52,7 @@ export class OrderRequest extends SharedRequest {
     }
   };
 
-  search = async (req: Request, res: Response) => {
+  search = async (req: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.find({
         invoice: { $regex: req.query.q, $options: "i" },
@@ -69,7 +70,7 @@ export class OrderRequest extends SharedRequest {
     }
   };
 
-  changeStatus = async (req: Request, res: Response) => {
+  changeStatus = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findById(req.params.id);
 
@@ -92,7 +93,7 @@ export class OrderRequest extends SharedRequest {
     }
   };
 
-  sendOrder = async (req: Request, res: Response) => {
+  sendOrder = async (req: ExtendedRequest, res: Response) => {
     try {
       const body = req.body;
 
@@ -115,7 +116,7 @@ export class OrderRequest extends SharedRequest {
             "Secret-Key": secrets.STEADFAST_SECRECT_KEY,
           },
           body: JSON.stringify(courirData),
-        }
+        },
       );
 
       const orderData = await data.json();

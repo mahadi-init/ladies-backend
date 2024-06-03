@@ -4,15 +4,19 @@ import { SharedRequest } from "../helpers/SharedRequest";
 import { Brand } from "../model/brand.model";
 import { Category } from "../model/category.model";
 import { Review } from "../model/review.model";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class ProductRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getAllData = async (_: Request, res: Response) => {
+  getAllData = async (_: ExtendedRequest, res: Response) => {
     try {
-      const data = await this.model.find({}).populate("reviews");
+      const data = await this.model.find({}).populate({
+        path: "reviews",
+        model: Review,
+      });
 
       res.status(200).json({
         success: true,
@@ -28,7 +32,7 @@ export class ProductRequest extends SharedRequest {
 
   //TODO: Find by category need to implement
 
-  getSingleData = async (req: Request, res: Response) => {
+  getSingleData = async (req: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.findById(req.params.id).populate({
         path: "reviews",
@@ -47,7 +51,7 @@ export class ProductRequest extends SharedRequest {
     }
   };
 
-  getSearchData = async (req: Request, res: Response) => {
+  getSearchData = async (req: ExtendedRequest, res: Response) => {
     try {
       const q = req.query.q;
 
@@ -70,66 +74,66 @@ export class ProductRequest extends SharedRequest {
       });
     }
   };
+  //
+  // getOfferTimeProduct = async (req: Request, res: Response) => {
+  //   try {
+  //     const result = await this.model
+  //       .find({
+  //         productType: req.query.type,
+  //         "offerDate.endDate": {
+  //           $gt: new Date(),
+  //         },
+  //       })
+  //       .populate("reviews");
+  //
+  //     res.status(200).json({
+  //       success: true,
+  //       data: result,
+  //     });
+  //   } catch (error: any) {
+  //     res.status(400).json({
+  //       success: false,
+  //       message: error.message,
+  //     });
+  //   }
+  // };
 
-  getOfferTimeProduct = async (req: Request, res: Response) => {
-    try {
-      const result = await this.model
-        .find({
-          productType: req.query.type,
-          "offerDate.endDate": {
-            $gt: new Date(),
-          },
-        })
-        .populate("reviews");
+  // getTopRated = async (_: Request, res: Response) => {
+  //       try {
+  //     const products = await this.model
+  //       .find({
+  //         reviews: { $exists: true, $ne: [] },
+  //       })
+  //       .populate("reviews");
 
-      res.status(200).json({
-        success: true,
-        data: result,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
+  //     const topRatedProducts = products.map((product) => {
+  //       const totalRating = product.reviews.reduce(
+  //         (,sum: number, review: { rating: number }) => sum + review.rating,
+  //         0
+  //       );
+  //       const averageRating = totalRating / product.reviews.length;
 
-  getTopRated = async (_: Request, res: Response) => {
-    try {
-      const products = await this.model
-        .find({
-          reviews: { $exists: true, $ne: [] },
-        })
-        .populate("reviews");
+  //       return {
+  //         ...product.toObject(),
+  //         rating: averageRating,
+  //       };
+  //     });
 
-      const topRatedProducts = products.map((product) => {
-        const totalRating = product.reviews.reduce(
-          (sum: number, review: { rating: number }) => sum + review.rating,
-          0
-        );
-        const averageRating = totalRating / product.reviews.length;
+  //     topRatedProducts.sort((a, b) => b.rating - a.rating);
 
-        return {
-          ...product.toObject(),
-          rating: averageRating,
-        };
-      });
+  //     res.status(200).json({
+  //       success: true,
+  //       data: topRatedProducts,
+  //     });
+  //   } catch (error: any) {
+  //     res.status(400).json({
+  //       success: false,
+  //       message: error.message,
+  //     });
+  //   }
+  // };
 
-      topRatedProducts.sort((a, b) => b.rating - a.rating);
-
-      res.status(200).json({
-        success: true,
-        data: topRatedProducts,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
-
-  getReviewProduct = async (_: Request, res: Response) => {
+  getReviewProduct = async (_: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model
         .find({
@@ -154,7 +158,7 @@ export class ProductRequest extends SharedRequest {
     }
   };
 
-  getPopularProducts = async (req: Request, res: Response) => {
+  getPopularProducts = async (req: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model
         .find({ productType: req.params.type })
@@ -174,7 +178,7 @@ export class ProductRequest extends SharedRequest {
     }
   };
 
-  findProducts = async (req: Request, res: Response) => {
+  findProducts = async (req: ExtendedRequest, res: Response) => {
     try {
       let products;
 
@@ -215,7 +219,7 @@ export class ProductRequest extends SharedRequest {
     }
   };
 
-  getRelatedProducts = async (req: Request, res: Response) => {
+  getRelatedProducts = async (req: ExtendedRequest, res: Response) => {
     try {
       const currentProduct = await this.model.findById(req.params.id);
 
@@ -236,7 +240,7 @@ export class ProductRequest extends SharedRequest {
     }
   };
 
-  getStockoutProducts = async (_: Request, res: Response) => {
+  getStockoutProducts = async (_: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.find({ status: "OUT-OF-STOCK" }).sort({
         createdAt: -1,
@@ -254,7 +258,7 @@ export class ProductRequest extends SharedRequest {
     }
   };
 
-  addProduct = async (req: Request, res: Response) => {
+  addProduct = async (req: ExtendedRequest, res: Response) => {
     try {
       const { brand, category } = req.body;
 

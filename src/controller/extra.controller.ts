@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class ExtraRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getAllData = async (_: Request, res: Response) => {
+  getAllData = async (_: ExtendedRequest, res: Response) => {
     try {
       const productTypes = await this.model.find({}).distinct("productType");
       const colors = await this.model.find({}).distinct("color");
@@ -25,7 +26,7 @@ export class ExtraRequest extends SharedRequest {
     }
   };
 
-  allProductTypes = async (_: Request, res: Response) => {
+  allProductTypes = async (_: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.find({}).distinct("productType");
 
@@ -41,7 +42,7 @@ export class ExtraRequest extends SharedRequest {
     }
   };
 
-  allColors = async (_: Request, res: Response) => {
+  allColors = async (_: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.find({}).distinct("color");
 
@@ -57,7 +58,7 @@ export class ExtraRequest extends SharedRequest {
     }
   };
 
-  allSizes = async (_: Request, res: Response) => {
+  allSizes = async (_: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.find({}).distinct("size");
       res.status(200).json({
@@ -72,7 +73,7 @@ export class ExtraRequest extends SharedRequest {
     }
   };
 
-  deleteByQuery = async (req: Request, res: Response) => {
+  deleteByQuery = async (req: ExtendedRequest, res: Response) => {
     try {
       const productType = req.query.productType;
       const color = req.query.color;

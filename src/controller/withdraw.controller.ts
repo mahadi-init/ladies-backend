@@ -1,13 +1,14 @@
+import { Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
-import { Request, Response } from "express";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class WithdrawRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getLastWithdraw = async (req: Request, res: Response) => {
+  getLastWithdraw = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model
         .findOne({ seller: req.params.id, status: true })
@@ -28,7 +29,7 @@ export class WithdrawRequest extends SharedRequest {
     }
   };
 
-  getAllWithdraws = async (req: Request, res: Response) => {
+  getAllWithdraws = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.find({ seller: req.params.id });
 

@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
+import { ExtendedRequest } from "../types/extended-request";
 import { generateToken } from "../utils/token";
 
 export class UserRequest extends SharedRequest {
@@ -8,7 +9,7 @@ export class UserRequest extends SharedRequest {
     super(model);
   }
 
-  login = async (req: Request, res: Response) => {
+  login = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findOne({ phone: req.body.phone });
 

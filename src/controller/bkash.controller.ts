@@ -5,6 +5,7 @@ import { Bkash } from "../model/bkash.model";
 import { Seller } from "../model/seller.model";
 import { Transaction } from "../model/transaction.model";
 import { BkashPayment } from "../types/bkash.t";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class BkashRequest {
   private readonly sandboxUrl = secrets.bkash_sandbox_baseurl;
@@ -86,7 +87,7 @@ export class BkashRequest {
   /**
    * make the payment
    */
-  createPayment = async (req: Request, res: Response) => {
+  createPayment = async (req: ExtendedRequest, res: Response) => {
     try {
       const id_token = await this.getProcessedIDToken();
 
@@ -156,7 +157,7 @@ export class BkashRequest {
       await Seller.findByIdAndUpdate(
         sellerID,
         { $inc: { balance: Number.parseInt(data.amount) } },
-        { $push: { transcations: tRes._id } }
+        { $push: { transcations: tRes._id } },
       );
 
       this.siteRedirect(res, this.sellerSiteURL, {
@@ -208,7 +209,7 @@ export class BkashRequest {
       url.format({
         pathname: pathname,
         query: query as any,
-      })
+      }),
     );
   };
 }

@@ -1,13 +1,14 @@
+import { Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
-import { Request, Response } from "express";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class BrandRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  allNames = async (_: Request, res: Response) => {
+  allNames = async (_: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.find({}).distinct("name");
 

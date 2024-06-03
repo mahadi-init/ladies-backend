@@ -1,13 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class AdminRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getStatus = async (req: Request, res: Response) => {
+  getStatus = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findById(req.params.id, { status: 1 });
 
@@ -23,7 +24,7 @@ export class AdminRequest extends SharedRequest {
     }
   };
 
-  search = async (req: Request, res: Response) => {
+  search = async (req: ExtendedRequest, res: Response) => {
     try {
       const q = req.query.q;
 
@@ -46,7 +47,7 @@ export class AdminRequest extends SharedRequest {
     }
   };
 
-  changePassword = async (req: Request, res: Response) => {
+  changePassword = async (req: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.findByIdAndUpdate(req.params.id, {
         password: req.body.password,

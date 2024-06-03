@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
-import { Transaction } from "../model/transaction.model";
 import { SharedRequest } from "../helpers/SharedRequest";
+import { Transaction } from "../model/transaction.model";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class TransactionRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getLastTransaction = async (req: Request, res: Response) => {
+  getLastTransaction = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await Transaction.findOne({ person: req.params.id })
         .sort({
@@ -28,7 +29,7 @@ export class TransactionRequest extends SharedRequest {
     }
   };
 
-  getAllTransactionsByID = async (req: Request, res: Response) => {
+  getAllTransactionsByID = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await Transaction.find({ person: req.params.id });
 

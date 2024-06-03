@@ -17,9 +17,9 @@ router.get("/page", handler.pagination); // PAGINATION
 
 router.get("/search", handler.getSearchData); // GET SEARCH DATA
 
-router.get("/offer", handler.getOfferTimeProduct); // GET OFFER TIMER PRODUCT
+// router.get("/offer", handler.getOfferTimeProduct); // GET OFFER TIMER PRODUCT
 
-router.get("/top-rated", handler.getTopRated); // GET TOP RATED
+// router.get("/top-rated", handler.getTopRated); // GET TOP RATED
 
 router.get("/review", handler.getReviewProduct); // GET REVIEW
 

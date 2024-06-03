@@ -9,7 +9,7 @@ router.get("/all", handler.getAllData); // GET ALL
 
 router.get("/get/:id", handler.getSingleData); // GET SINGLE
 
-router.get("/by-person-id/:id", handler.getOrdersByPersonID); // GET BY PERSON ID
+router.get("/me", handler.getOrdersByPersonID); // GET BY PERSON ID
 
 router.get("/page", handler.pagination); // PAGINATION
 

@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
 import { Order } from "../model/order.model";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class SellerRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getAllData = async (_: Request, res: Response) => {
+  getAllData = async (_: ExtendedRequest, res: Response) => {
     try {
       // show false approve fast
       const data = await this.model.find().sort({ approved: -1 });
@@ -25,7 +26,7 @@ export class SellerRequest extends SharedRequest {
     }
   };
 
-  getStatus = async (req: Request, res: Response) => {
+  getStatus = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findById(req.params.id, { status: 1 });
 
@@ -41,7 +42,7 @@ export class SellerRequest extends SharedRequest {
     }
   };
 
-  search = async (req: Request, res: Response) => {
+  search = async (req: ExtendedRequest, res: Response) => {
     try {
       const q = req.query.q;
 
@@ -65,7 +66,7 @@ export class SellerRequest extends SharedRequest {
     }
   };
 
-  changePassword = async (req: Request, res: Response) => {
+  changePassword = async (req: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.findByIdAndUpdate(req.params.id, {
         password: req.body.password,
@@ -83,7 +84,7 @@ export class SellerRequest extends SharedRequest {
     }
   };
 
-  orderPagination = async (req: Request, res: Response) => {
+  orderPagination = async (req: ExtendedRequest, res: Response) => {
     try {
       const page = req.query.page;
       const limit = req.query.limit;
@@ -109,7 +110,7 @@ export class SellerRequest extends SharedRequest {
     }
   };
 
-  getOrderTotalPages = async (req: Request, res: Response) => {
+  getOrderTotalPages = async (req: ExtendedRequest, res: Response) => {
     try {
       const result = await Order.find({
         _id: req.params.id,
@@ -128,7 +129,7 @@ export class SellerRequest extends SharedRequest {
     }
   };
 
-  approveSeller = async (req: Request, res: Response) => {
+  approveSeller = async (req: ExtendedRequest, res: Response) => {
     try {
       await this.model.findByIdAndUpdate(req.params.id, {
         approved: true,
@@ -146,7 +147,7 @@ export class SellerRequest extends SharedRequest {
     }
   };
 
-  orderSearch = async (req: Request, res: Response) => {
+  orderSearch = async (req: ExtendedRequest, res: Response) => {
     try {
       const q = req.query.q;
 

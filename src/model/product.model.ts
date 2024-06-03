@@ -100,14 +100,14 @@ const productSchema = new mongoose.Schema(
     ],
     tags: [String],
     sizes: [String],
-    offerDate: {
-      startDate: {
-        type: Date,
-      },
-      endDate: {
-        type: Date,
-      },
-    },
+    // offerDate: {
+    //   startDate: {
+    //     type: Date,
+    //   },
+    //   endDate: {
+    //     type: Date,
+    //   },
+    // },
     featured: {
       type: Boolean,
       default: false,
@@ -120,7 +120,7 @@ const productSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 productSchema.pre("save", async function (next) {
