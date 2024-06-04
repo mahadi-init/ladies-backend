@@ -12,6 +12,8 @@ router.get("/:id", handler.getReviewsByProductId); // BY PRODUCT ID
 
 router.post("/add", handler.addData); // ADD NEW DATA
 
+router.patch("/approve/:id", handler.approveReview); // APPROVE
+
 router.delete("/delete/:id", handler.deleteData); // DELETE REVIEW
 
 export default router;

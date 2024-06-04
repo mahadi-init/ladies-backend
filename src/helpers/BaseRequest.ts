@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class BaseRequest {
   readonly model: typeof mongoose.Model;
@@ -8,7 +9,7 @@ export class BaseRequest {
     this.model = model;
   }
 
-  getAllData = async (_: Request, res: Response) => {
+  getAllData = async (_: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.find({});
 
@@ -24,7 +25,7 @@ export class BaseRequest {
     }
   };
 
-  getSingleData = async (req: Request, res: Response) => {
+  getSingleData = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findById(req.params.id);
 
@@ -44,7 +45,7 @@ export class BaseRequest {
     }
   };
 
-  addData = async (req: Request, res: Response) => {
+  addData = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.create(req.body);
 
@@ -60,7 +61,7 @@ export class BaseRequest {
     }
   };
 
-  updateData = async (req: Request, res: Response) => {
+  updateData = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findById(req.params.id);
 

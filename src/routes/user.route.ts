@@ -15,4 +15,8 @@ router.get("/total-pages", handler.getTotalPages);
 
 router.post("/register", handler.addData); // CREATE USER
 
+router.patch("/change-status/:id", handler.changeStatus); // UPDATE STATUS
+
+router.delete("/delete/:id", handler.deleteData);
+
 export default router;

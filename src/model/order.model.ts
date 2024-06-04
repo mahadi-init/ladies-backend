@@ -1,5 +1,5 @@
-import mongoose, { Types } from "mongoose";
-const ObjectId = Types.ObjectId;
+import mongoose from "mongoose";
+const { ObjectId } = mongoose.Schema.Types;
 
 const orderSchema = new mongoose.Schema(
   {
@@ -69,7 +69,7 @@ const orderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 // define pre-save middleware to generate the invoice number
 orderSchema.pre("save", async function (next) {

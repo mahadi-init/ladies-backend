@@ -23,7 +23,6 @@ const productSchema = new mongoose.Schema(
     variants: [
       {
         color: String,
-        // code: String,
         img: String,
         size: String,
         quantity: Number,
@@ -86,10 +85,7 @@ const productSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "IN-STOCK",
-      enum: {
-        values: ["IN-STOCK", "OUT-OF-STOCK", "DISCONTINUED"],
-        message: "status can't be {VALUE} ",
-      },
+      enum: ["IN-STOCK", "OUT-OF-STOCK", "DISCONTINUED"],
     },
     reviews: [{ type: ObjectId, ref: "Review" }],
     additionalInformation: [
@@ -100,14 +96,6 @@ const productSchema = new mongoose.Schema(
     ],
     tags: [String],
     sizes: [String],
-    // offerDate: {
-    //   startDate: {
-    //     type: Date,
-    //   },
-    //   endDate: {
-    //     type: Date,
-    //   },
-    // },
     featured: {
       type: Boolean,
       default: false,
@@ -146,5 +134,4 @@ productSchema.pre("save", async function (next) {
   }
 });
 
-export const Product =
-  mongoose.models.Product || mongoose.model("Product", productSchema);
+export const Product = mongoose.model("Product", productSchema);

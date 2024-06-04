@@ -8,10 +8,9 @@ const reviewSchema = new mongoose.Schema(
       reuired: true,
       default: "anonymous",
     },
-    productId: {
+    product: {
       type: ObjectId,
       ref: "Product",
-      required: true,
     },
     rating: { type: Number, required: true, min: 0, max: 5 },
     comment: { type: String },
@@ -22,7 +21,7 @@ const reviewSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const Review = mongoose.model("Review", reviewSchema);

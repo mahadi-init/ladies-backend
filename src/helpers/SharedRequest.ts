@@ -3,13 +3,14 @@ import mongoose from "mongoose";
 import { nodemailerImpl } from "../utils/nodemailer-impl";
 import { generateToken } from "../utils/token";
 import { BaseRequest } from "./BaseRequest";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class SharedRequest extends BaseRequest {
   constructor(model: typeof mongoose.Model) {
     super(model);
   }
 
-  getActiveData = async (_: Request, res: Response) => {
+  getActiveData = async (_: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.find({ status: true });
 
@@ -25,7 +26,7 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
-  getTotalPages = async (_: Request, res: Response) => {
+  getTotalPages = async (_: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.estimatedDocumentCount();
       const numOfPages = Math.ceil(result / 10);
@@ -42,7 +43,7 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
-  pagination = async (req: Request, res: Response) => {
+  pagination = async (req: ExtendedRequest, res: Response) => {
     try {
       const page = req.query.page;
       const limit = req.query.limit;
@@ -65,7 +66,7 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
-  search = async (req: Request, res: Response) => {
+  search = async (req: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.find({
         name: { $regex: req.query.q, $options: "i" },
@@ -83,7 +84,7 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
-  changeStatus = async (req: Request, res: Response) => {
+  changeStatus = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findById(req.params.id);
 
@@ -105,7 +106,7 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
-  login = async (req: Request, res: Response) => {
+  login = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findOne({ phone: req.body.phone });
 
@@ -172,7 +173,7 @@ export class SharedRequest extends BaseRequest {
           <p>If you did not request a password reset, please ignore this email.</p>
           <p>Thank you,<br/>The LadiesSign Team</p>
         </div>
-        `
+        `,
       );
 
       res.status(200).json({

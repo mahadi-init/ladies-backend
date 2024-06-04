@@ -1,7 +1,5 @@
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 import validator from "validator";
-
-const ObjectId = Types.ObjectId;
 
 const userSchema = new mongoose.Schema(
   {
@@ -32,11 +30,10 @@ const userSchema = new mongoose.Schema(
       default: true,
       required: true,
     },
-    reviews: [{ type: ObjectId, ref: "Review" }],
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const User = mongoose.model("User", userSchema);

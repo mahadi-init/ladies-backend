@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
 import { SharedRequest } from "../helpers/SharedRequest";
 import { Brand } from "../model/brand.model";
@@ -11,12 +11,15 @@ export class ProductRequest extends SharedRequest {
     super(model);
   }
 
-  getAllData = async (_: ExtendedRequest, res: Response) => {
+  getAllData = async (req: ExtendedRequest, res: Response) => {
     try {
-      const data = await this.model.find({}).populate({
-        path: "reviews",
-        model: Review,
-      });
+      const data = await this.model
+        .find({})
+        .populate({
+          path: "Review",
+          model: Review,
+        })
+        .exec();
 
       res.status(200).json({
         success: true,
