@@ -13,13 +13,10 @@ export class ProductRequest extends SharedRequest {
 
   getAllData = async (req: ExtendedRequest, res: Response) => {
     try {
-      const data = await this.model
-        .find({})
-        .populate({
-          path: "Review",
-          model: Review,
-        })
-        .exec();
+      const data = await this.model.find({}).populate({
+        path: "reviews",
+        model: Review,
+      });
 
       res.status(200).json({
         success: true,
