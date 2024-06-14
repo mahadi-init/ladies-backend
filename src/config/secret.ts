@@ -2,7 +2,7 @@ const secrets = {
   port: (process.env.port as string) || 7000,
 
   // MONGODB
-  mongo_uri: process.env.mongo_uri || ("mongodb://localhost:27017" as string),
+  mongo_uri: process.env.mongo_uri,
 
   // JWT
   jwt_secret: process.env.jwt_secret as string,
