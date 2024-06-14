@@ -26,21 +26,10 @@ const adminSchema = new mongoose.Schema(
         "Please provide a valid phone number",
       ],
     },
-    img: {
-      type: String,
-      required: false,
-      validate: [validator.isURL, "Please provide valid url(s)"],
-    },
-    address: String,
-    forgetPasswordToken: String,
+    img : String,
     role: {
       type: String,
-      default: "EDITOR",
-      enum: ["SUPERADMIN", "ADMIN", "EDITOR"],
-    },
-    status: {
-      type: Boolean,
-      default: true,
+      deafult: "ADMIN"
     },
   },
   {

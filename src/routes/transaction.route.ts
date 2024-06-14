@@ -5,7 +5,7 @@ import { TransactionRequest } from "../controller/transaction.controller";
 const router = Router();
 const handler = new TransactionRequest(Transaction);
 
-router.get("/last/:id", handler.getLastTransaction); // GET LAST TRANSACTION
+router.get("/last", handler.getLastTransaction); // GET LAST TRANSACTION
 
 router.get("/all/:id", handler.getAllTransactionsByID); // GET ALL TRANSACTION
 

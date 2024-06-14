@@ -11,24 +11,7 @@ export class SellerRequest extends SharedRequest {
 
   getAllData = async (_: ExtendedRequest, res: Response) => {
     try {
-      // show false approve fast
       const data = await this.model.find().sort({ approved: -1 });
-
-      res.status(200).json({
-        success: true,
-        data: data,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
-
-  getStatus = async (req: ExtendedRequest, res: Response) => {
-    try {
-      const data = await this.model.findById(req.params.id, { status: 1 });
 
       res.status(200).json({
         success: true,
@@ -49,7 +32,6 @@ export class SellerRequest extends SharedRequest {
       const result = await this.model.find({
         $or: [
           { name: { $regex: q, $options: "i" } },
-          { cid: { $regex: q, $options: "i" } },
           { phone: { $regex: q, $options: "i" } },
         ],
       });
@@ -57,6 +39,27 @@ export class SellerRequest extends SharedRequest {
       res.status(200).json({
         success: true,
         data: result,
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+
+  updateData = async (req: ExtendedRequest, res: Response) => {
+    try {
+      const id = req.id
+
+      if (!id) {
+        throw new Error("Unauthorized");
+      }
+
+      await this.model.findByIdAndUpdate(id, req.body);
+
+      res.status(200).json({
+        success: true,
       });
     } catch (error: any) {
       res.status(400).json({
@@ -170,4 +173,24 @@ export class SellerRequest extends SharedRequest {
       });
     }
   };
+
+  getCurrentSellerData = async (req: ExtendedRequest, res: Response) => {
+    try {
+      console.log(req.id);
+
+      const data = await this.model.findById(req.id)
+      console.log(data);
+
+
+      res.status(200).json({
+        success: true,
+        data: data
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
 }

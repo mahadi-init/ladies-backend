@@ -61,15 +61,11 @@ export class DashboardRequest {
         createdAt: { $gte: todayStart.toDate(), $lte: todayEnd.toDate() },
       });
 
-      let todayCashPaymentAmount = 0;
+      let todayPayment = 0;
       let todayCardPaymentAmount = 0;
 
       todayOrders.forEach((order) => {
-        if (order.paymentMethod === "COD") {
-          todayCashPaymentAmount += order.totalAmount;
-        } else if (order.paymentMethod === "Card") {
-          todayCardPaymentAmount += order.totalAmount;
-        }
+        todayPayment += order.total;
       });
 
       const yesterdayOrders = await Order.find({
@@ -79,15 +75,11 @@ export class DashboardRequest {
         },
       });
 
-      let yesterDayCashPaymentAmount = 0;
+      let yesterdayPayment = 0;
       let yesterDayCardPaymentAmount = 0;
 
       yesterdayOrders.forEach((order) => {
-        if (order.paymentMethod === "COD") {
-          yesterDayCashPaymentAmount += order.totalAmount;
-        } else if (order.paymentMethod === "Card") {
-          yesterDayCardPaymentAmount += order.totalAmount;
-        }
+        yesterdayPayment += order.total
       });
 
       const monthlyOrders = await Order.find({
@@ -96,19 +88,19 @@ export class DashboardRequest {
 
       const totalOrders = await Order.find();
       const todayOrderAmount = todayOrders.reduce(
-        (total, order) => total + order.totalAmount,
+        (total, order) => total + order.total,
         0,
       );
       const yesterdayOrderAmount = yesterdayOrders.reduce(
-        (total, order) => total + order.totalAmount,
+        (total, order) => total + order.total,
         0,
       );
 
       const monthlyOrderAmount = monthlyOrders.reduce((total, order) => {
-        return total + order.totalAmount;
+        return total + order.total;
       }, 0);
       const totalOrderAmount = totalOrders.reduce(
-        (total, order) => total + order.totalAmount,
+        (total, order) => total + order.total,
         0,
       );
 
@@ -120,9 +112,9 @@ export class DashboardRequest {
           monthlyOrderAmount,
           totalOrderAmount,
           todayCardPaymentAmount,
-          todayCashPaymentAmount,
+          todayCashPaymentAmount: todayPayment,
           yesterDayCardPaymentAmount,
-          yesterDayCashPaymentAmount,
+          yesterDayCashPaymentAmount: yesterdayPayment,
         },
       });
     } catch (error: any) {
@@ -133,86 +125,10 @@ export class DashboardRequest {
     }
   };
 
-  getSalesReport = async (_: ExtendedRequest, res: Response) => {
+  getDashboardPendingOrders = async (_: ExtendedRequest, res: Response) => {
     try {
-      const startOfWeek = new Date();
-      startOfWeek.setDate(startOfWeek.getDate() - 7);
-
-      const salesOrderChartData = await Order.find({
-        updatedAt: {
-          $gte: startOfWeek,
-          $lte: new Date(),
-        },
-      });
-
-      const salesReport = salesOrderChartData.reduce((res, value) => {
-        const onlyDate = value.updatedAt.toISOString().split("T")[0];
-
-        if (!res[onlyDate]) {
-          res[onlyDate] = { date: onlyDate, total: 0, order: 0 };
-        }
-        res[onlyDate].total += value.totalAmount;
-        res[onlyDate].order += 1;
-        return res;
-      }, {});
-
-      const salesReportData = Object.values(salesReport);
-
-      // Send the response to the client site
-      res.status(200).json({
-        success: true,
-        data: salesReportData,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
-
-  getMostSellingCategory = async (_: ExtendedRequest, res: Response) => {
-    try {
-      const categoryData = await Order.aggregate([
-        {
-          $unwind: "$cart", // Deconstruct the cart array
-        },
-        {
-          $group: {
-            _id: "$cart.productType",
-            count: { $sum: "$cart.orderQuantity" },
-          },
-        },
-        {
-          $sort: { count: -1 },
-        },
-        {
-          $limit: 5,
-        },
-      ]);
-
-      res.status(200).json({
-        success: true,
-        data: categoryData,
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
-
-  getDashboardRecentOrder = async (req: ExtendedRequest, res: Response) => {
-    try {
-      const { page, limit } = req.query;
-
-      // const pages = Number(page) || 1;
-      // const limits = Number(limit) || 8;
-      // // const skip = (pages - 1) * limits;
-
       const queryObject = {
-        status: { $in: ["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"] },
+        status: { $in: ["PENDING"] },
       };
 
       const totalDoc = await Order.countDocuments(queryObject);
@@ -238,8 +154,6 @@ export class DashboardRequest {
         success: true,
         data: {
           orders: orders,
-          page: page,
-          limit: limit,
           totalOrder: totalDoc,
         },
       });

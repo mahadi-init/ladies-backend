@@ -8,8 +8,6 @@ const handler = new ExtraRequest(Extra);
 
 router.get("/all", handler.getAllData); // GET ALL
 
-router.get("/all/product-types", handler.allProductTypes); // GET PRODUCT TYPES
-
 router.get("/all/colors", handler.allColors); // GET ALL COLORS
 
 router.get("/all/sizes", handler.allSizes); // GET ALL SIZES

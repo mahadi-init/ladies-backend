@@ -9,8 +9,8 @@ const withdrawSchema = new mongoose.Schema(
       required: true,
     },
     status: {
-      type: Boolean,
-      deafult: false,
+      type: String,
+      default: "PENDING",
     },
     amount: {
       type: Number,

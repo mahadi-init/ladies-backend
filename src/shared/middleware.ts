@@ -4,7 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import connectDB from "../config/db";
-import { jwtAuthorization } from "../utils/jwt-auth";
+import { setAuthInfoWithReq } from "../utils/jwt-auth";
 
 const app = express();
 
@@ -31,13 +31,13 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(jwtAuthorization); // jwt auth middleware
+app.use(setAuthInfoWithReq); // jwt auth middleware
 
-app.use((req, res, next) => {
-  //TODO: add more strict authorization
+// app.use((req, res, next) => {
+//   //TODO: add more strict authorization
 
-  next();
-});
+//   next();
+// });
 
 // reconnect database
 app.use((_, res, next) => {

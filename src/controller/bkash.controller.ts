@@ -6,6 +6,7 @@ import { Seller } from "../model/seller.model";
 import { Transaction } from "../model/transaction.model";
 import { BkashPayment } from "../types/bkash.t";
 import { ExtendedRequest } from "../types/extended-request";
+import mongoose from "mongoose";
 
 export class BkashRequest {
   private readonly sandboxUrl = secrets.bkash_sandbox_baseurl;
@@ -16,17 +17,11 @@ export class BkashRequest {
   private readonly refresh_token = secrets.bkash_refresh_token;
   private id_token: string | null | undefined;
 
-  userSiteURL: string;
-  sellerSiteURL: string;
+  //TODO: ADD actual site url
+  private isSeller: boolean = false
+  private sellerSite = "http://localhost:3000/profile"
+  private userSite = "/user/site"
 
-  constructor(userSiteURL: string, sellerSiteURL: string) {
-    this.userSiteURL = userSiteURL;
-    this.sellerSiteURL = sellerSiteURL;
-  }
-
-  /**
-   * generate id token
-   */
   private getIDToken = async () => {
     try {
       const result = await fetch(`${this.sandboxUrl}/token/refresh`, {
@@ -59,11 +54,6 @@ export class BkashRequest {
     }
   };
 
-  /**
-   * If last id token is more that 50 mintues
-   * get token from refresh token or else get
-   * token from db
-   */
   private getProcessedIDToken = async () => {
     const dbRes = await Bkash.find({}).limit(1);
 
@@ -84,9 +74,6 @@ export class BkashRequest {
     return this.id_token;
   };
 
-  /**
-   * make the payment
-   */
   createPayment = async (req: ExtendedRequest, res: Response) => {
     try {
       const id_token = await this.getProcessedIDToken();
@@ -122,94 +109,82 @@ export class BkashRequest {
     }
   };
 
-  executeSellerPaymentCallback = async (req: Request, res: Response) => {
+  executePaymentCallback = async (req: Request, res: Response) => {
     try {
-      const { paymentID } = req.query;
-      const sellerID = req.params.id;
+      const { paymentID, seller, user } = req.query;
 
-      const result = await fetch(`${this.sandboxUrl}/execute`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: this.id_token as string,
-          "X-App-Key": this.app_key,
-        },
-        body: JSON.stringify({
-          paymentID: paymentID,
-        }),
-        credentials: "include",
-      });
-
-      const data: BkashPayment = await result.json();
-
-      if (data.statusCode !== "0000") {
-        throw new Error(data.statusMessage);
+      let id;
+      if (seller) {
+        id = seller
+        this.isSeller = true
+      } else {
+        id = user
       }
 
-      // STORE TRANSACTION DETAILS
-      const tRes = await Transaction.create({
-        ...data,
-        person: sellerID,
-        isSeller: true,
-      });
+      const transaction = await this.getBkashTransactionData(paymentID, id)
 
-      // ADD BALANCE & TRANSACTION ID
-      await Seller.findByIdAndUpdate(
-        sellerID,
-        { $inc: { balance: Number.parseInt(data.amount) } },
-        { $push: { transcations: tRes._id } },
-      );
+      if (this.isSeller) {
+        await Seller.findByIdAndUpdate(
+          id,
+          { $inc: { balance: Number.parseInt(transaction?.amount as string) } },
+        );
+      }
 
-      this.siteRedirect(res, this.sellerSiteURL, {
+      this.redirct(res, {
         success: true,
-        paymentID: data.paymentID,
+        data: transaction.paymentID,
       });
     } catch (error: any) {
-      this.siteRedirect(res, this.sellerSiteURL, {
+      this.redirct(res, {
         success: false,
-        message: error.message,
+        message: "Payment failed",
       });
     }
   };
 
-  // executeCallbackPayment = async (req: Request, res: Response) => {
-  //   try {
-  //     const { paymentID } = req.query;
-  //     const id = req.params.id;
-  //
-  //     const result = await fetch(`${this.sandboxUrl}/execute`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: this.id_token as string,
-  //         "X-App-Key": this.app_key,
-  //       },
-  //       body: JSON.stringify({
-  //         paymentID: paymentID,
-  //       }),
-  //       credentials: "include",
-  //     });
-  //
-  //     const data: BkashPayment = await result.json();
-  //
-  //     this.siteRedirect(res, {
-  //       success: true,
-  //       paymentID: data.paymentID,
-  //     });
-  //   } catch (error: any) {
-  //     this.siteRedirect(res, {
-  //       success: false,
-  //       message: error.message,
-  //     });
-  //   }
-  // };
-
-  private siteRedirect = (res: Response, pathname: string, query?: object) => {
-    res.redirect(
-      url.format({
-        pathname: pathname,
-        query: query as any,
+  private getBkashTransactionData = async (paymentID: any, personID: any) => {
+    const result = await fetch(`${this.sandboxUrl}/execute`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: this.id_token as string,
+        "X-App-Key": this.app_key,
+      },
+      body: JSON.stringify({
+        paymentID: paymentID,
       }),
-    );
+      credentials: "include",
+    });
+
+    const data: BkashPayment = await result.json();
+
+    if (data.statusCode !== "0000") {
+      throw new Error("Payment failed");
+    }
+
+    const transaction = await Transaction.create({
+      ...data,
+      person: personID,
+    });
+
+    return transaction
+  }
+
+  private redirct = (res: Response, query?: object) => {
+    if (this.isSeller) {
+      res.redirect(
+        url.format({
+          pathname: this.sellerSite,
+          query: query as any,
+        }),
+      );
+    } else {
+      res.redirect(
+        url.format({
+          pathname: this.userSite,
+          query: query as any,
+        }),
+      );
+    }
   };
 }

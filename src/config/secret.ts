@@ -23,9 +23,6 @@ const secrets = {
   //nodemailer
   nodemailer_email: process.env.nodemailer_email as string,
   nodemailer_password: process.env.nodemailer_password as string,
-
-  // bearer token
-  bearer_token: process.env.bearer_token as string,
 };
 
 export default secrets;

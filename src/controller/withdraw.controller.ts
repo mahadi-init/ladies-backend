@@ -10,12 +10,13 @@ export class WithdrawRequest extends SharedRequest {
 
   getLastWithdraw = async (req: ExtendedRequest, res: Response) => {
     try {
+      const id = req.id
+
       const data = await this.model
-        .findOne({ seller: req.params.id, status: true })
+        .findOne({ seller: id })
         .sort({
           createdAt: -1,
         })
-        .limit(1);
 
       res.status(200).json({
         success: true,

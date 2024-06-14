@@ -6,12 +6,8 @@ const handler = new DashboardRequest();
 
 router.get("/steadfast-balance", handler.getSteadFastBalance);
 
-router.get("/amount", handler.getDashboardAmount); // DASHBOARD ADMOUNT
+router.get("/amount", handler.getDashboardAmount);
 
-router.get("/sales-report", handler.getSalesReport); // SALES REPORT
-
-router.get("/most-selling-category", handler.getMostSellingCategory); // MOST SELLING CATEGORY
-
-router.get("/recent-order", handler.getDashboardRecentOrder); // RECENT recent-order
+router.get("/recent-order", handler.getDashboardPendingOrders);
 
 export default router;

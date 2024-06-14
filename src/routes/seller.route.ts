@@ -1,48 +1,43 @@
 import { Router } from "express";
 import { SellerRequest } from "../controller/seller.controller";
 import { Seller } from "../model/seller.model";
+import { setAuthInfoWithReq } from "../utils/jwt-auth";
 
 const router = Router();
 const handler = new SellerRequest(Seller);
 
-router.get("/all", handler.getAllData); // GET ALL
+router.get("/all", handler.getAllData);
 
-router.get("/get/:id", handler.getSingleData); // GET SINGLE
+router.get("/get/:id", handler.getSingleData);
 
-router.get("/total-pages", handler.getTotalPages); // GET TOTAL PAGES
+router.get("/total-pages", handler.getTotalPages);
 
-router.get("/page", handler.pagination); // PAGINATION
+router.get("/page", handler.pagination);
 
-router.get("/status/:id", handler.getStatus); // GET STATUS
+router.get("/search", handler.search);
 
-router.get("/search", handler.search); // SEARCH
+router.get("/info/me", handler.getCurrentSellerData)
 
 // NOTE: ORDER
 
-router.get("/order/:id", handler.orderPagination); // ORDER PAGINATION
+router.get("/order/:id", handler.orderPagination);
 
-router.get("/order/total-pages/:id", handler.getOrderTotalPages); // ORDER TOTAL PAGES
+router.get("/order/total-pages/:id", handler.getOrderTotalPages);
 
-router.get("/order/search/:id", handler.orderSearch); // ORDER SEARCH
+router.get("/order/search/:id", handler.orderSearch);
 
 // NOTE: ORDER END
 
-router.post("/register", handler.addData); // ADD NEW SELLER
+router.post("/register", handler.addData);
 
-router.post("/forget-password", handler.forgetPassword); // FORGET PASSWORD
+router.patch("/edit", handler.updateData);
 
-router.post("/reset-token-login", handler.resetTokenLogin); // RESET TOKEN LOGIN
+router.patch("/edit/:id", handler.updateData);
 
-router.post("/login", handler.login); // LOGIN
+router.patch("/approve/:id", handler.approveSeller);
 
-router.patch("/edit/:id", handler.updateData); // UPDATE SELLR
+router.patch("/change-password/:id", handler.changePassword);
 
-router.patch("/change-status/:id", handler.changeStatus); // UPDATE STATUS
-
-router.patch("/approve/:id", handler.approveSeller); // APPROVE
-
-router.patch("/change-password/:id", handler.changePassword); // CHANGE PASSWORD
-
-router.delete("/delete/:id", handler.deleteData); // DELETE DATA
+router.delete("/delete/:id", handler.deleteData);
 
 export default router;

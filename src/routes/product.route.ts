@@ -17,10 +17,6 @@ router.get("/page", handler.pagination); // PAGINATION
 
 router.get("/search", handler.getSearchData); // GET SEARCH DATA
 
-// router.get("/offer", handler.getOfferTimeProduct); // GET OFFER TIMER PRODUCT
-
-// router.get("/top-rated", handler.getTopRated); // GET TOP RATED
-
 router.get("/review", handler.getReviewProduct); // GET REVIEW
 
 router.get("/popular/:type", handler.getPopularProducts); // GET POPULAR PRODUCTS
@@ -31,7 +27,7 @@ router.get("/related/:id", handler.getRelatedProducts); // GET REALTED PRODUCTS
 
 router.get("/stock-out", handler.getStockoutProducts); // GET STOCK PRODUCTS
 
-router.post("/add", handler.addProduct); // ADD PRODUCT
+router.post("/add", handler.addData); // ADD PRODUCT
 
 router.patch("/edit/:id", handler.updateData); // UPDATE
 

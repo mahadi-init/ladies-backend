@@ -4,17 +4,13 @@ import secrets from "../config/secret";
 
 interface User {
   id: string;
-  name: string;
   role?: string;
-  status: boolean;
 }
 
 export const generateToken = (user: User) => {
   const payload = {
     id: user.id,
-    name: user.name,
     role: user.role,
-    status: user.status,
   };
 
   if (!secrets.jwt_secret) {
@@ -26,16 +22,12 @@ export const generateToken = (user: User) => {
 };
 
 export const getBearerToken = async (req: Request) => {
-  try {
-    const bearerHeader = req.headers["authorization"];
-    if (typeof bearerHeader !== "undefined") {
-      const bearer = bearerHeader.split(" ");
-      const bearerToken = bearer[1];
-      return bearerToken;
-    } else {
-      throw new Error("Token is unavailable");
-    }
-  } catch (err: any) {
-    throw err;
+  const bearerHeader = req.headers["authorization"];
+  if (typeof bearerHeader !== "undefined") {
+    const bearer = bearerHeader.split(" ");
+    const bearerToken = bearer[1];
+    return bearerToken;
+  } else {
+    return null
   }
 };

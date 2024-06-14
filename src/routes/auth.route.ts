@@ -1,26 +1,11 @@
 import { Router } from "express";
-import { nodemailerImpl } from "../utils/nodemailer-impl";
+import { AuthRequest } from "../controller/auth.controller";
 
-const router = Router();
+const router = Router()
+const handler = new AuthRequest()
 
-router.post("/forget-password", async (req, res) => {
-  try {
-    const data = await nodemailerImpl(
-      ["mahadi.dev@outlook.com"],
-      "Forget Password",
-      "Your password is $something",
-    );
+router.post('/login', handler.login)
 
-    res.status(200).json({
-      success: true,
-      data: data,
-    });
-  } catch (err: any) {
-    res.status(400).json({
-      success: false,
-      message: err.message,
-    });
-  }
-});
+router.post("/forget-password", handler.forgetPassword)
 
-export default router;
+export default router

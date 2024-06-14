@@ -7,11 +7,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    password: {
-      type: String,
-      required: true,
-      minLength: [6, "Must be at least 6 character"],
-    },
+    email: String,
     phone: {
       type: String,
       required: true,
@@ -21,15 +17,6 @@ const userSchema = new mongoose.Schema(
       ],
     },
     address: String,
-    role: {
-      type: String,
-      deafult: "USER",
-    },
-    status: {
-      type: Boolean,
-      default: true,
-      required: true,
-    },
   },
   {
     timestamps: true,

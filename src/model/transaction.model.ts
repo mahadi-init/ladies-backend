@@ -8,7 +8,6 @@ const transactionSchema = new mongoose.Schema(
     paymentCreateTime: String,
     paymentID: String,
     transactionStatus: String,
-    isSeller: Boolean,
   },
   {
     timestamps: true,

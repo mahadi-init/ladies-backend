@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const extraSchema = new mongoose.Schema(
   {
-    productType: String,
     color: {
       name: {
         type: String,

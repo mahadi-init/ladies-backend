@@ -3,19 +3,14 @@ const { ObjectId } = mongoose.Schema.Types;
 
 const orderSchema = new mongoose.Schema(
   {
-    personID: {
-      type: String,
-      required: true,
-    },
-    sellerID: {
-      type: Number,
-      required: true,
-      default: 1000,
-    },
+    sellerID: String,
     cart: [
       {
-        type: ObjectId,
-        ref: "Product",
+        id: ObjectId,
+        name: String,
+        price: Number,
+        quantity: Number,
+        img: String,
       },
     ],
     name: {
@@ -30,7 +25,6 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    city: String,
     subTotal: {
       type: Number,
       required: true,
@@ -39,64 +33,30 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    discount: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
     total: {
       type: Number,
       required: true,
     },
     referral: String,
-    paymentMethod: {
-      type: String,
-      required: true,
-    },
-    paymentDetails: {},
-    orderNote: String,
-    trackingCode: String,
+    note: String,
     trackingLink: String,
     invoice: {
-      type: Number,
+      type: String,
       unique: true,
     },
     status: {
       type: String,
-      enum: ["PENDING", "PROCESSING", "DELIVERED", "CANCELLED"],
       default: "PENDING",
     },
+    lastChecked: Date
   },
   {
     timestamps: true,
   },
 );
-// define pre-save middleware to generate the invoice number
+
 orderSchema.pre("save", async function (next) {
-  const order = this;
-  if (!order.invoice) {
-    // check if the order already has an invoice number
-    try {
-      // find the highest invoice number in the orders collection
-      const highestInvoice = await mongoose
-        .model("Order")
-        .find({})
-        .sort({ invoice: "desc" })
-        .limit(1)
-        .select({ invoice: 1 });
-      // if there are no orders in the collection, start at 1000
-      const startingInvoice =
-        highestInvoice.length === 0 ? 1000 : highestInvoice[0].invoice + 1;
-      // set the invoice number for the new order
-      order.invoice = startingInvoice;
-      next();
-    } catch (err: any) {
-      next(err);
-    }
-  } else {
-    next();
-  }
+  this.invoice = this._id.toString().slice(-7)
 });
 
-export const Order =
-  mongoose.models.Order || mongoose.model("Order", orderSchema);
+export const Order = mongoose.model("Order", orderSchema);

@@ -4,6 +4,7 @@ import { nodemailerImpl } from "../utils/nodemailer-impl";
 import { generateToken } from "../utils/token";
 import { BaseRequest } from "./BaseRequest";
 import { ExtendedRequest } from "../types/extended-request";
+import { Transaction } from "../model/transaction.model";
 
 export class SharedRequest extends BaseRequest {
   constructor(model: typeof mongoose.Model) {
@@ -54,6 +55,14 @@ export class SharedRequest extends BaseRequest {
       const skip = (parseInt(page) - 1) * parseInt(limit);
       const result = await this.model.find().skip(skip).limit(parseInt(limit));
 
+      // add transaction history with result
+      let data = []
+      result.map(async (res) => {
+        const transaction = await Transaction.find({ phone: res.phone }).countDocuments()
+
+        data.push({ ...res, transaction: transaction })
+      })
+
       res.status(200).json({
         success: true,
         data: result,
@@ -84,124 +93,25 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
-  changeStatus = async (req: ExtendedRequest, res: Response) => {
-    try {
-      const data = await this.model.findById(req.params.id);
-
-      if (!data) {
-        throw new Error("Data not found");
-      }
-
-      data.status = !data.status;
-      await data.save();
-
-      res.status(200).json({
-        success: true,
-      });
-    } catch (error) {
-      res.status(400).json({
-        success: false,
-        message: error,
-      });
-    }
-  };
-
   login = async (req: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.findOne({ phone: req.body.phone });
 
-      if (data && req.body.password === data.password) {
-        if (!data.status) {
-          throw new Error("Inactive account");
-        }
-
-        const token = generateToken({
-          id: data._id,
-          name: data.name,
-          status: data.status,
-          role: data.role,
-        });
-
-        return res.status(200).json({
-          success: true,
-          data: data,
-          token: token,
-        });
-      }
-
-      res.status(400).json({
-        success: false,
-        message: "No account found",
-      });
-    } catch (error: any) {
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
-
-  forgetPassword = async (req: Request, res: Response) => {
-    try {
-      const result = await this.model.findOne({ email: req.body.email });
-
-      // create 4 random token
-      const token =
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
-
-      if (!result) {
-        throw new Error("User not found");
-      }
-
-      result.forgetPasswordToken = token;
-      await result.save();
-
-      await nodemailerImpl(
-        result.email,
-        "Password Recovery",
-        undefined,
-        `
-        <div style="font-family: Arial, sans-serif; color: #333;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://github.com/Nahidakanda/LadiesSign/blob/main/LadiesSignBkash.png?raw=true" alt="LadiesSign" style="max-width: 100%; height: auto;" />
-          </div>
-          <h1 style="color: #444;">Reset Your Password</h1>
-          <p>Hello,</p>
-          <p>We received a request to reset your password. Use the following token to reset it:</p>
-          <p style="font-size: 18px; font-weight: bold; color: #555;">${token}</p>
-          <p>If you did not request a password reset, please ignore this email.</p>
-          <p>Thank you,<br/>The LadiesSign Team</p>
-        </div>
-        `,
-      );
-
-      res.status(200).json({
-        success: true,
-      });
-    } catch (err: any) {
-      res.status(400).json({
-        success: false,
-        message: err.message,
-      });
-    }
-  };
-
-  resetTokenLogin = async (req: Request, res: Response) => {
-    try {
-      const data = await this.model.findOne({
-        forgetPasswordToken: req.body.token,
-      });
-
       if (!data) {
-        throw new Error("Wrong token");
+        return res.status(400).json({
+          success: false,
+          message: "No account found",
+        });
+      } else if (req.body.password === data.password) {
+        return res.status(400).json({
+          success: false,
+          message: "Incorrect password",
+        });
       }
 
-      let token = generateToken({
+      const token = generateToken({
         id: data._id,
-        name: data.name,
-        status: data.status,
-        role: data.role,
+        role: data.role ?? "USER",
       });
 
       res.status(200).json({
@@ -209,10 +119,10 @@ export class SharedRequest extends BaseRequest {
         data: data,
         token: token,
       });
-    } catch (err: any) {
+    } catch (error: any) {
       res.status(400).json({
         success: false,
-        message: err.message,
+        message: error.message,
       });
     }
   };

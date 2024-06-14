@@ -5,32 +5,28 @@ import { Admin } from "../model/admin.model";
 const router = Router();
 const handler = new AdminRequest(Admin);
 
-router.get("/all", handler.getAllData); // GET ALL
+router.get("/all", handler.getAllData);
 
-router.get("/get/:id", handler.getSingleData); //GET SINGLE
+router.get("/get/:id", handler.getSingleData);
 
-router.get("/status/:id", handler.getStatus); // GET STATUS
+router.get("/status/:id", handler.getStatus);
 
-router.get("/total-pages", handler.getTotalPages); // GET TOTAL PAGES
+router.get("/total-pages", handler.getTotalPages);
 
-router.get("/page", handler.pagination); // PAGINATION
+router.get("/page", handler.pagination);
 
-router.get("/search", handler.search); // SEARCH
+router.get("/search", handler.search);
 
-router.post("/register", handler.addData); // ADD NEW ADMIN
+router.post("/register", handler.addData);
 
-router.post("/login", handler.login);
+router.patch("/edit/:id", handler.updateData);
 
-router.post("/forget-password", handler.forgetPassword); // FORGET PASSWORD
+router.patch("/edit/me",)
 
-router.post("/reset-token-login", handler.resetTokenLogin); // RESET TOKEN LOGIN
+router.patch("/change-password/:id", handler.changePassword);
 
-router.patch("/edit/:id", handler.updateData); // UPDATE
+router.patch("/change-password/me",)
 
-router.patch("/change-status/:id", handler.changeStatus); // UPDATE STATUS
-
-router.patch("/change-password/:id", handler.changePassword); // CHANGE PASSWORD
-
-router.delete("/delete/:id", handler.deleteData); // DELETE
+router.delete("/delete/:id", handler.deleteData)
 
 export default router;

@@ -1,24 +1,27 @@
 import { Router } from "express";
 import { OrderRequest } from "../controller/order.controller";
 import { Order } from "../model/order.model";
+import { setAuthInfoWithReq } from "../utils/jwt-auth";
 
 const router = Router();
 const handler = new OrderRequest(Order);
 
-router.get("/all", handler.getAllData); // GET ALL
+router.get("/all",  handler.getAllData);
 
-router.get("/get/:id", handler.getSingleData); // GET SINGLE
+router.get("/get/:id", handler.getSingleData);
 
-router.get("/me", handler.getOrdersByPersonID); // GET BY PERSON ID
+router.get("/count/me", handler.getOrdersByPhone)   // by phone, query params
 
-router.get("/page", handler.pagination); // PAGINATION
+router.get("/page",  handler.pagination);
 
-router.get("/total-pages", handler.getTotalPages); // TOTAL PAGES
+router.get("/total-pages",  handler.getTotalPages);
 
-router.search("/search", handler.search); // SEARCH
+router.get("/search",  handler.search);
 
-router.post("/add", handler.addData); // ADD DATA
+router.post("/add", handler.addData);
 
-router.patch("/change-status", handler.changeStatus); // CHANGE STATUS
+router.post("/send-order",  handler.sendOrder)
+
+router.delete("/delete/:id",  handler.deleteData)
 
 export default router;

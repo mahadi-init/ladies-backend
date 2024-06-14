@@ -11,7 +11,13 @@ export class TransactionRequest extends SharedRequest {
 
   getLastTransaction = async (req: ExtendedRequest, res: Response) => {
     try {
-      const data = await Transaction.findOne({ person: req.params.id })
+      const id = req.id
+
+      if (!id && req.role !== "SELLER") {
+        throw new Error("Unauthorized")
+      }
+
+      const data = await Transaction.findOne({ person: id })
         .sort({
           createdAt: -1,
         })
