@@ -15,7 +15,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:3001",
       "https://ladies-sign-admin.vercel.app",
-      "http://localhost:5173",
+      "https://www.ladiessign.com.bd",
     ],
     credentials: true,
     allowedHeaders: [
