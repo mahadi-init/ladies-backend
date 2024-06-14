@@ -23,9 +23,8 @@ export const generateToken = (user: User) => {
 
 export const getBearerToken = async (req: Request) => {
   const bearerHeader = req.headers["authorization"];
-  if (typeof bearerHeader !== "undefined") {
-    const bearer = bearerHeader.split(" ");
-    const bearerToken = bearer[1];
+  if (bearerHeader && bearerHeader.startsWith("Bearer ")) {
+    const bearerToken = bearerHeader.split(" ")[1];
     return bearerToken;
   } else {
     return null

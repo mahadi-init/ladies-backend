@@ -9,26 +9,20 @@ export async function setAuthInfoWithReq(
   res: Response,
   next: NextFunction,
 ) {
+  let data = null
+  let bearerToken = await getBearerToken(req);
+
+  if (!bearerToken) {
+    return next()
+  }
+
   try {
-    let data = null
-    const bearerToken = await getBearerToken(req);
-
-    if (!bearerToken) {
-      return next()
-    }
-
-    try {
-      data = jwt.verify(bearerToken, secrets.jwt_secret) as any
-      req.id = data.id
-      req.role = data.role
-    } catch (error) {
-      next()
-    }
+    data = jwt.verify(bearerToken, secrets.jwt_secret) as any
+    req.id = data.id
+    req.role = data.role
 
     next()
-  } catch (error) {
-    res.status(401).json({
-      success: false
-    });
+  } catch {
+    next()
   }
 }
