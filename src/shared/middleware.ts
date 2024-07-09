@@ -4,7 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import connectDB from "../config/db";
-import { setAuthInfoWithReq } from "../utils/jwt-auth";
+import {setAuthInfoWithReq} from "../utils/jwt-auth";
 
 const app = express();
 
@@ -40,13 +40,14 @@ app.use(setAuthInfoWithReq); // jwt auth middleware
 // });
 
 // reconnect database
-app.use((_, res, next) => {
+app.use(async (_, res, next) => {
   try {
     const mongoStatus = mongoose.connection.readyState;
 
     switch (mongoStatus) {
       case 0:
-        connectDB();
+        await connectDB();
+        break;
       default:
         next();
     }
