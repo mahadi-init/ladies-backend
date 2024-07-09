@@ -2,7 +2,7 @@ const secrets = {
   port: (process.env.port as string) || 7000,
 
   // MONGODB
-  mongo_uri: process.env.mongo_uri,
+  mongo_uri: process.env.mongo_uri as string,
 
   // JWT
   jwt_secret: process.env.jwt_secret as string,

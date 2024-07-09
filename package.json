@@ -5,7 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "dev": "bun --watch src/index.ts",
-    "start": "tsc && node dist/index.js"
+    "start": "tsc && node dist/index.js",
+    "build": ""
   },
   "dependencies": {
     "@types/nodemailer": "^6.4.15",

@@ -66,7 +66,7 @@ const orderSchema = new mongoose.Schema(
 );
 
 orderSchema.pre("save", async function (next) {
-  this.invoice = getLastSixDigit(this._id.toString());
+  this.invoice = getLastSixDigit(this._id.toString())
   next();
 });
 
