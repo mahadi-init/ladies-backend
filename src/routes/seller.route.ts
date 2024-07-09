@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { SellerRequest } from "../controller/seller.controller";
 import { Seller } from "../model/seller.model";
-import { setAuthInfoWithReq } from "../utils/jwt-auth";
 
 const router = Router();
 const handler = new SellerRequest(Seller);
@@ -14,7 +13,7 @@ router.get("/total-pages", handler.getTotalPages);
 
 router.get("/page", handler.pagination);
 
-router.get("/search", handler.search);
+// router.get("/search", handler.search);
 
 router.get("/info/me", handler.getCurrentSellerData)
 
@@ -35,6 +34,8 @@ router.patch("/edit", handler.updateData);
 router.patch("/edit/:id", handler.updateData);
 
 router.patch("/approve/:id", handler.approveSeller);
+
+router.patch("/refresh", handler.refresh)
 
 router.patch("/change-password/:id", handler.changePassword);
 

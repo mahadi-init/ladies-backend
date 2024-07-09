@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
+import { getLastSixDigit } from "../utils/get-last-six-digit";
 const { ObjectId } = mongoose.Schema.Types;
 
 const orderSchema = new mongoose.Schema(
   {
-    sellerID: String,
+    name: {
+      type: String,
+      required: true,
+    },
     cart: [
       {
         id: ObjectId,
@@ -11,12 +15,11 @@ const orderSchema = new mongoose.Schema(
         price: Number,
         quantity: Number,
         img: String,
+        sku: String,
+        color: String,
+        size: String,
       },
     ],
-    name: {
-      type: String,
-      required: true,
-    },
     phone: {
       type: String,
       required: true,
@@ -33,22 +36,29 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    sku: String,
     total: {
       type: Number,
       required: true,
     },
-    referral: String,
     note: String,
     trackingLink: String,
+    consignmentId: String,
+    sellerName: String,
+    sellerId: String,
+    confirm: {
+      type: String,
+      default: "NO",
+    },
     invoice: {
       type: String,
       unique: true,
     },
+    lastChecked: Date,
     status: {
       type: String,
-      default: "PENDING",
+      default: "WAITING",
     },
-    lastChecked: Date
   },
   {
     timestamps: true,
@@ -56,7 +66,8 @@ const orderSchema = new mongoose.Schema(
 );
 
 orderSchema.pre("save", async function (next) {
-  this.invoice = this._id.toString().slice(-7)
+  this.invoice = getLastSixDigit(this._id.toString());
+  next();
 });
 
 export const Order = mongoose.model("Order", orderSchema);

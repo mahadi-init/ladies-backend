@@ -6,7 +6,6 @@ import { Seller } from "../model/seller.model";
 import { Transaction } from "../model/transaction.model";
 import { BkashPayment } from "../types/bkash.t";
 import { ExtendedRequest } from "../types/extended-request";
-import mongoose from "mongoose";
 
 export class BkashRequest {
   private readonly sandboxUrl = secrets.bkash_sandbox_baseurl;
@@ -18,9 +17,9 @@ export class BkashRequest {
   private id_token: string | null | undefined;
 
   //TODO: ADD actual site url
-  private isSeller: boolean = false
-  private sellerSite = "http://localhost:3000/profile"
-  private userSite = "/user/site"
+  private isSeller: boolean = false;
+  private sellerSite = "http://localhost:3000/profile";
+  private userSite = "/user/site";
 
   private getIDToken = async () => {
     try {
@@ -115,19 +114,18 @@ export class BkashRequest {
 
       let id;
       if (seller) {
-        id = seller
-        this.isSeller = true
+        id = seller;
+        this.isSeller = true;
       } else {
-        id = user
+        id = user;
       }
 
-      const transaction = await this.getBkashTransactionData(paymentID, id)
+      const transaction = await this.getBkashTransactionData(paymentID, id);
 
       if (this.isSeller) {
-        await Seller.findByIdAndUpdate(
-          id,
-          { $inc: { balance: Number.parseInt(transaction?.amount as string) } },
-        );
+        await Seller.findByIdAndUpdate(id, {
+          $inc: { balance: Number.parseInt(transaction?.amount as string) },
+        });
       }
 
       this.redirct(res, {
@@ -167,8 +165,8 @@ export class BkashRequest {
       person: personID,
     });
 
-    return transaction
-  }
+    return transaction;
+  };
 
   private redirct = (res: Response, query?: object) => {
     if (this.isSeller) {

@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
 import secrets from "../config/secret";
 import { SharedRequest } from "../helpers/SharedRequest";
-import { ExtendedRequest } from "../types/extended-request";
 import { Order } from "../model/order.model";
 import { User } from "../model/user.model";
+import { ExtendedRequest } from "../types/extended-request";
 
 export class OrderRequest extends SharedRequest {
   constructor(model: typeof mongoose.Model) {
@@ -13,106 +13,144 @@ export class OrderRequest extends SharedRequest {
 
   getOrdersByPhone = async (req: ExtendedRequest, res: Response) => {
     try {
-      const id = req.id
-      const phone = req.query.phone
-      let orders
+      const id = req.id;
+      const phone = req.query.phone;
+      let orders;
 
       if (id) {
-        orders = await this.model.find({ sellerID: id })
+        orders = await this.model.find({ sellerID: id });
       } else {
         orders = await this.model.find({ phone: phone });
       }
 
-      console.log(orders);
-
-
-      let pendingOrder = 0
-      let processingOrder = 0
-      let completedOrder = 0
-      let totalOrder = 0
+      let pendingOrder = 0;
+      let processingOrder = 0;
+      let completedOrder = 0;
+      let totalOrder = 0;
 
       orders.map((item: any) => {
         switch (item.status) {
-          case "PENDING":
-            pendingOrder++
+          case "WAITING":
+            pendingOrder++;
             break;
           case "DELIVERED":
-            completedOrder++
+            completedOrder++;
             break;
           default:
             processingOrder++;
             break;
         }
-      })
+      });
 
-      totalOrder = pendingOrder + processingOrder + completedOrder
+      totalOrder = pendingOrder + processingOrder + completedOrder;
 
       const count = {
         pendingOrder,
         processingOrder,
         completedOrder,
-        totalOrder
-      }
+        totalOrder,
+      };
 
       res.status(200).json({
         success: true,
         count: count,
-        orders: orders
+        orders: orders,
       });
     } catch (err: any) {
       res.status(400).json({
         success: false,
-        message: err.message
+        message: err.message,
       });
     }
   };
 
-  pagination = async (req: ExtendedRequest, res: Response) => {
+  getPaginatedOrders = async (req: ExtendedRequest, res: Response) => {
     try {
+      // query params
       const page = req.query.page;
       const limit = req.query.limit;
+      let search = req.query.search;
+      let status = req.query.status;
+      let confirm = req.query.confirm;
 
+      // filter by params
+      const filterBy: "default" | "search" | "status" | "confirm" = req.query
+        .filterBy as any;
+
+      // check the types are number
       if (typeof page !== "string" || typeof limit !== "string")
         throw new Error("page and limit must be numbers");
 
-      // sort by status/ the status are pending show first
       const skip = (parseInt(page) - 1) * parseInt(limit);
-      let result = await Order
-        .find()
-        .skip(skip)
-        .limit(parseInt(limit))
-        .sort({ status: 1 });
 
-      result.map(async (r) => {
-        const timeGap = Math.floor(
-          (new Date().getTime() - (r.lastChecked ? new Date(r.lastChecked).getTime() : 0)) /
-          1000 / 60
-        );
+      // empty array initialization
+      let result: any = [];
 
-        if (r.status !== "DELIVERED" && r.status !== "CANCELLED" && timeGap > 30) {
-          const status = await fetch(
-            `${secrets.STEADFAST_BASE_URL}/status_by_invoice/${r.invoice}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                "Api-Key": secrets.STEADFAST_API_KEY,
-                "Secret-Key": secrets.STEADFAST_SECRECT_KEY,
-              },
-            },
-          );
+      // filter by default
+      if (filterBy === "default") {
+        result = await Order.find()
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit));
+      }
 
-          if (status.ok) {
-            const data = await status.json()
+      // filter by search
+      if (filterBy === "search") {
+        result = await Order.find({
+          $or: [
+            { invoice: { $regex: search, $options: "i" } },
+            { consignmentId: { $regex: search, $options: "i" } },
+            { name: { $regex: search, $options: "i" } },
+            { sellerPhone: { $regex: search, $options: "i" } },
+            { sellerName: { $regex: search, $options: "i" } },
+            { phone: { $regex: search, $options: "i" } },
+          ],
+        })
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit));
+      }
 
-            if (data.status === 200) {
-              r.status = data.delivery_status.toUpperCase()
-            }
-          }
-          r.lastChecked = new Date()
-          r.save()
+      // filter by status
+      if (filterBy === "status") {
+        if (status === "ALL") {
+          result = await Order.find({})
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit));
+        } else if (status === "PROCESSING") {
+          result = await Order.find({
+            status: { $nin: ["WAITING", "DELIVERED", "CANCELLED"] },
+          })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit));
+        } else {
+          result = await Order.find({
+            status: status,
+          })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit));
         }
-      })
+      }
+
+      // filter by confirm
+      if (filterBy === "confirm") {
+        if (confirm === "ALL") {
+          result = await Order.find({})
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit));
+        } else {
+          result = await Order.find({
+            confirm: confirm,
+          })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit));
+        }
+      }
 
       res.status(200).json({
         success: true,
@@ -151,6 +189,61 @@ export class OrderRequest extends SharedRequest {
     }
   };
 
+  refreshOrder = async (_: ExtendedRequest, res: Response) => {
+    try {
+      const result = await Order.find({});
+
+      // steadfast status mapping
+      result.map(async (r: any) => {
+        const timeGap = Math.floor(
+          (new Date().getTime() -
+            (r.lastChecked ? new Date(r.lastChecked).getTime() : 0)) /
+            1000 /
+            60,
+        );
+
+        if (
+          r.status !== "DELIVERED" &&
+          r.status !== "CANCELLED" &&
+          r.status !== "WAITING" &&
+          timeGap > 60
+        ) {
+          const status = await fetch(
+            `${secrets.STEADFAST_BASE_URL}/status_by_invoice/${r.invoice}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                "Api-Key": secrets.STEADFAST_API_KEY,
+                "Secret-Key": secrets.STEADFAST_SECRECT_KEY,
+              },
+            },
+          );
+
+          if (status.ok) {
+            const data = await status.json();
+
+            if (data.status === 200) {
+              r.status = data.delivery_status.toUpperCase();
+            }
+          }
+          r.lastChecked = new Date();
+          r.save();
+        }
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+
   getTotalPages = async (_: ExtendedRequest, res: Response) => {
     try {
       const result = await this.model.estimatedDocumentCount();
@@ -168,33 +261,10 @@ export class OrderRequest extends SharedRequest {
     }
   };
 
-  // changeStatus = async (req: ExtendedRequest, res: Response) => {
-  //   try {
-  //     const data = await this.model.findById(req.params.id);
-
-  //     if (!data) {
-  //       throw new Error("Data not found");
-  //     }
-
-  //     await this.model.findByIdAndUpdate(req.params.id, {
-  //       status: req.body.status,
-  //     });
-
-  //     res.status(200).json({
-  //       success: true,
-  //     });
-  //   } catch (error) {
-  //     res.status(400).json({
-  //       success: false,
-  //       message: error,
-  //     });
-  //   }
-  // };
-
   addData = async (req: ExtendedRequest, res: Response) => {
     try {
-      const id = req.id
-      let data
+      const id = req.id;
+      let data;
 
       if (id) {
         data = await Order.create({ ...req.body, sellerID: id });
@@ -202,8 +272,8 @@ export class OrderRequest extends SharedRequest {
         data = await Order.create({ ...req.body });
 
         // save user info and create user
-        const { name, phone, address } = req.body
-        User.create({ name: name, phone: phone, address: address })
+        const { name, phone, address } = req.body;
+        User.create({ name: name, phone: phone, address: address });
       }
 
       res.status(200).json({
@@ -245,23 +315,112 @@ export class OrderRequest extends SharedRequest {
       );
 
       const orderData = await courirResponse.json();
-      const order = await Order.findOne({ invoice: body.invoice })
+      const order = await Order.findOne({ invoice: body.invoice });
 
       if (order) {
         if (orderData.consignment.tracking_code) {
-          order.trackingLink = `https://steadfast.com.bd/t/${orderData.consignment.tracking_code}`
+          order.trackingLink = `https://steadfast.com.bd/t/${orderData.consignment.tracking_code}`;
         }
-        order.status = orderData.consignment.status.toUpperCase()
-        order.save()
+        order.status = orderData.consignment.status.toUpperCase();
+        order.save();
       }
 
       res.status(200).json({
         success: true,
-      })
+      });
     } catch (err: any) {
       res.status(400).json({
         success: false,
         message: err.message,
+      });
+    }
+  };
+
+  changeConfirmStatus = async (req: ExtendedRequest, res: Response) => {
+    try {
+      await Order.findByIdAndUpdate(req.params.id, {
+        confirm: req.body.confirm,
+      });
+
+      res.status(200).json({
+        success: true,
+      });
+    } catch (error: any) {
+      res.status(200).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+
+  changeOrderStatus = async (req: ExtendedRequest, res: Response) => {
+    try {
+      await Order.findByIdAndUpdate(req.params.id, {
+        status: req.body.status,
+      });
+
+      res.status(200).json({
+        success: true,
+      });
+    } catch (error: any) {
+      res.status(200).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+
+  refreshData = async (_: ExtendedRequest, res: Response) => {
+    try {
+      const result = await Order.find({});
+
+      // steadfast status mapping
+      result.map(async (r: any) => {
+        const timeGap = Math.floor(
+          (new Date().getTime() -
+            (r.lastChecked ? new Date(r.lastChecked).getTime() : 0)) /
+            1000 /
+            60,
+        );
+
+        if (
+          r.status !== "DELIVERED" &&
+          r.status !== "CANCELLED" &&
+          r.status !== "WAITING" &&
+          timeGap > 60
+        ) {
+          const status = await fetch(
+            `${secrets.STEADFAST_BASE_URL}/status_by_invoice/${r.invoice}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                "Api-Key": secrets.STEADFAST_API_KEY,
+                "Secret-Key": secrets.STEADFAST_SECRECT_KEY,
+              },
+            },
+          );
+
+          if (status.ok) {
+            const data = await status.json();
+
+            if (data.status === 200) {
+              r.status = data.delivery_status.toUpperCase();
+            }
+          }
+          r.lastChecked = new Date();
+          r.save();
+        }
+      });
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
       });
     }
   };

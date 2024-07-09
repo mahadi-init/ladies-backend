@@ -62,7 +62,6 @@ export class DashboardRequest {
       });
 
       let todayPayment = 0;
-      let todayCardPaymentAmount = 0;
 
       todayOrders.forEach((order) => {
         todayPayment += order.total;
@@ -76,10 +75,9 @@ export class DashboardRequest {
       });
 
       let yesterdayPayment = 0;
-      let yesterDayCardPaymentAmount = 0;
 
       yesterdayOrders.forEach((order) => {
-        yesterdayPayment += order.total
+        yesterdayPayment += order.total;
       });
 
       const monthlyOrders = await Order.find({
@@ -111,10 +109,6 @@ export class DashboardRequest {
           yesterdayOrderAmount,
           monthlyOrderAmount,
           totalOrderAmount,
-          todayCardPaymentAmount,
-          todayCashPaymentAmount: todayPayment,
-          yesterDayCardPaymentAmount,
-          yesterDayCashPaymentAmount: yesterdayPayment,
         },
       });
     } catch (error: any) {
@@ -128,7 +122,7 @@ export class DashboardRequest {
   getDashboardPendingOrders = async (_: ExtendedRequest, res: Response) => {
     try {
       const queryObject = {
-        status: { $in: ["PENDING"] },
+        status: { $in: ["WAITING"] },
       };
 
       const totalDoc = await Order.countDocuments(queryObject);
@@ -162,6 +156,25 @@ export class DashboardRequest {
         success: false,
         message: error.message,
       });
+    }
+  };
+
+  salesPermonth = async (_: Request, res: Response) => {
+    try {
+      const salesPerMonth = await Order.aggregate([
+        {
+          $group: {
+            _id: { $month: "$createdAt" },
+            totalSales: { $sum: "$total" },
+          },
+        },
+        {
+          $sort: { _id: 1 },
+        },
+      ]);
+      res.json(salesPerMonth);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   };
 }

@@ -9,6 +9,22 @@ export class BaseRequest {
     this.model = model;
   }
 
+  refresh = async (_: Request, res: Response) => {
+    try {
+      await this.model.find({})
+
+      res.status(200).json({
+        success: true,
+        message: "Refreshed successfully"
+      });
+    } catch (err: any) {
+      res.status(400).json({
+        success: false,
+        message: err.message
+      });
+    }
+  };
+
   getAllData = async (_: ExtendedRequest, res: Response) => {
     try {
       const data = await this.model.find({});

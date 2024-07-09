@@ -1,10 +1,8 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import mongoose from "mongoose";
-import { nodemailerImpl } from "../utils/nodemailer-impl";
+import { ExtendedRequest } from "../types/extended-request";
 import { generateToken } from "../utils/token";
 import { BaseRequest } from "./BaseRequest";
-import { ExtendedRequest } from "../types/extended-request";
-import { Transaction } from "../model/transaction.model";
 
 export class SharedRequest extends BaseRequest {
   constructor(model: typeof mongoose.Model) {
@@ -44,24 +42,77 @@ export class SharedRequest extends BaseRequest {
     }
   };
 
+  // pagination = async (req: ExtendedRequest, res: Response) => {
+  //   try {
+  //     const page = req.query.page;
+  //     const limit = req.query.limit;
+
+  //     if (typeof page !== "string" || typeof limit !== "string")
+  //       throw new Error("page and limit must be numbers");
+
+  //     const skip = (parseInt(page) - 1) * parseInt(limit);
+  //     const result = await this.model.find().skip(skip).limit(parseInt(limit));
+
+  //     // add transaction history with result
+  //     let data = []
+  //     result.map(async (res) => {
+  //       const transaction = await Transaction.find({ phone: res.phone }).countDocuments()
+
+  //       data.push({ ...res, transaction: transaction })
+  //     })
+
+  //     res.status(200).json({
+  //       success: true,
+  //       data: result,
+  //     });
+  //   } catch (error: any) {
+  //     res.status(400).json({
+  //       success: false,
+  //       message: error.message,
+  //     });
+  //   }
+  // };
+
   pagination = async (req: ExtendedRequest, res: Response) => {
     try {
+      // query params
       const page = req.query.page;
       const limit = req.query.limit;
+      let search = req.query.search;
 
-      if (typeof page !== "string" || typeof limit !== "string")
+      // filter by params
+      const filterBy: "default" | "search" = req.query
+        .filterBy as any;
+
+      // check the types are number 
+      if (typeof page !== "string" || typeof limit !== "string"){
         throw new Error("page and limit must be numbers");
+      }
 
       const skip = (parseInt(page) - 1) * parseInt(limit);
-      const result = await this.model.find().skip(skip).limit(parseInt(limit));
 
-      // add transaction history with result
-      let data = []
-      result.map(async (res) => {
-        const transaction = await Transaction.find({ phone: res.phone }).countDocuments()
+      // empty array initialization
+      let result: any = [];
 
-        data.push({ ...res, transaction: transaction })
-      })
+      // filter by default
+      if (filterBy === "default") {
+        result = await this.model.find().sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit));
+      }
+
+      // filter by search
+      if (filterBy === "search") {
+        result = await this.model.find({
+          $or: [
+            { invoice: { $regex: search, $options: "i" } },
+            { name: { $regex: search, $options: "i" } },
+            { phone: { $regex: search, $options: "i" } },
+          ],
+        }).sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit));
+      }
 
       res.status(200).json({
         success: true,

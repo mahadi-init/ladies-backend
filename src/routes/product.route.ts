@@ -13,7 +13,7 @@ router.get("/active", handler.getActiveData); // GET ACTIVE PRODUCTS
 
 router.get("/total-pages", handler.getTotalPages); // GET TOTAL PAGES
 
-router.get("/page", handler.pagination); // PAGINATION
+router.get("/page", handler.getPaginatedProducts); // PAGINATION
 
 router.get("/search", handler.getSearchData); // GET SEARCH DATA
 
@@ -28,6 +28,8 @@ router.get("/related/:id", handler.getRelatedProducts); // GET REALTED PRODUCTS
 router.get("/stock-out", handler.getStockoutProducts); // GET STOCK PRODUCTS
 
 router.post("/add", handler.addData); // ADD PRODUCT
+
+router.patch("/refresh", handler.refresh)
 
 router.patch("/edit/:id", handler.updateData); // UPDATE
 

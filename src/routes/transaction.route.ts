@@ -9,4 +9,6 @@ router.get("/last", handler.getLastTransaction); // GET LAST TRANSACTION
 
 router.get("/all/:id", handler.getAllTransactionsByID); // GET ALL TRANSACTION
 
+router.get("/page", handler.pagination); // GET ALL TRANSACTION
+
 export default router;

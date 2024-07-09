@@ -10,4 +10,6 @@ router.get("/amount", handler.getDashboardAmount);
 
 router.get("/recent-order", handler.getDashboardPendingOrders);
 
+router.get("/sales-per-month", handler.salesPermonth);
+
 export default router;

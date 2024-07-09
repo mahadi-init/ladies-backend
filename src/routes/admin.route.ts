@@ -11,21 +11,19 @@ router.get("/get/:id", handler.getSingleData);
 
 router.get("/status/:id", handler.getStatus);
 
-router.get("/total-pages", handler.getTotalPages);
-
 router.get("/page", handler.pagination);
-
-router.get("/search", handler.search);
 
 router.post("/register", handler.addData);
 
 router.patch("/edit/:id", handler.updateData);
 
-router.patch("/edit/me",)
+// router.patch("/edit/me",)
+
+router.patch("/refresh", handler.refresh)
 
 router.patch("/change-password/:id", handler.changePassword);
 
-router.patch("/change-password/me",)
+// router.patch("/change-password/me",)
 
 router.delete("/delete/:id", handler.deleteData)
 

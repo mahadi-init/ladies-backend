@@ -50,7 +50,7 @@ export class SellerRequest extends SharedRequest {
 
   updateData = async (req: ExtendedRequest, res: Response) => {
     try {
-      const id = req.id
+      const id = req.id;
 
       if (!id) {
         throw new Error("Unauthorized");
@@ -176,21 +176,17 @@ export class SellerRequest extends SharedRequest {
 
   getCurrentSellerData = async (req: ExtendedRequest, res: Response) => {
     try {
-      console.log(req.id);
-
-      const data = await this.model.findById(req.id)
-      console.log(data);
-
+      const data = await this.model.findById(req.id);
 
       res.status(200).json({
         success: true,
-        data: data
+        data: data,
       });
     } catch (error: any) {
       res.status(400).json({
         success: false,
-        message: error.message
+        message: error.message,
       });
     }
-  }
+  };
 }

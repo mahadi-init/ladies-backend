@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const transactionSchema = new mongoose.Schema(
   {
     person: String,
+    isSeller: Boolean,
     amount: String,
     merchantInvoiceNumber: String,
     paymentCreateTime: String,

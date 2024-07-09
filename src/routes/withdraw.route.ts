@@ -21,6 +21,10 @@ router.get("/search", handler.search);
 
 router.post("/add", handler.addData);
 
+router.patch("/change-status/:id", handler.changeStatus);
+
+router.patch("/refresh", handler.refresh);
+
 router.delete("/delete/:id", handler.deleteData);
 
 export default router;
